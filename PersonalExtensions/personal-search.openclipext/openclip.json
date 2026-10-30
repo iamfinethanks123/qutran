@@ -1,0 +1,22 @@
+{
+  "identifier": "personal.search",
+  "name": "搜尋網站",
+  "description": "用揀咗嘅文字喺常用網站搜尋。直接編輯呢個檔案就可以增刪網站，{query} 會換成揀咗嘅文字。",
+  "version": "1.0.0",
+  "actions": [
+    {
+      "id": "sites",
+      "title": "搜尋…",
+      "icon": "symbol(magnifyingglass.circle)",
+      "type": "group",
+      "keywords": ["search", "搜尋", "google", "youtube"],
+      "subActions": [
+        { "id": "google", "title": "Google", "icon": "symbol(globe)", "url": "https://www.google.com/search?q={query}" },
+        { "id": "youtube", "title": "YouTube", "icon": "symbol(play.rectangle)", "url": "https://www.youtube.com/results?search_query={query}" },
+        { "id": "wikipedia", "title": "維基百科", "icon": "symbol(book.closed)", "url": "https://zh.wikipedia.org/w/index.php?search={query}" },
+        { "id": "cambridge", "title": "Cambridge 字典", "icon": "symbol(character.book.closed)", "url": "https://dictionary.cambridge.org/search/direct/?datasetsearch=english-chinese-traditional&q={query}" },
+        { "id": "github", "title": "GitHub", "icon": "symbol(chevron.left.forwardslash.chevron.right)", "url": "https://github.com/search?q={query}" }
+      ]
+    }
+  ]
+}

@@ -207,4 +207,5 @@ public enum Log: Sendable {
     public static let permissions = LogChannel(category: "permissions")
     public static let icons = LogChannel(category: "icons")
     public static let updates = LogChannel(category: "updates")
+    public static let personal = LogChannel(category: "personal")
 }

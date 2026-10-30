@@ -77,9 +77,10 @@ enum PopupThemeModel {
     public static func classicSurfaceBackground(for colorScheme: ColorScheme, in shape: RoundedRectangle) -> some View {
         shape.fill(
             Color(
-                red: colorScheme == .dark ? 0.15 : 0.94,
-                green: colorScheme == .dark ? 0.15 : 0.94,
-                blue: colorScheme == .dark ? 0.165 : 0.96
+                // Personal build: warm cream in light mode, matching the hub window.
+                red: colorScheme == .dark ? 0.15 : 0.973,
+                green: colorScheme == .dark ? 0.15 : 0.957,
+                blue: colorScheme == .dark ? 0.165 : 0.925
             )
         )
     }

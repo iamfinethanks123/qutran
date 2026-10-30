@@ -180,6 +180,7 @@ class StatusBarController: NSObject, NSMenuDelegate, NSMenuItemValidation {
         captureItem.setShortcut(for: .captureText)
         self.captureTextMenuItem = captureItem
         menu.addItem(captureItem)
+        PersonalMenu.shared.addItems(to: menu)
 
         let actionsMenu = NSMenu(title: String(localized: "Actions"))
         actionsMenu.delegate = self

@@ -153,6 +153,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCenterDele
             ActionCoordinator.shared.register(action: RevealInFinderAction())
             ActionCoordinator.shared.register(action: CompletionAction())
             ActionCoordinator.shared.register(action: AIToolsAction())
+            PersonalFeatures.registerActions()
+            PersonalMenu.shared.installHotkey()
             // Register each AI preset as an individual action (palette + Preferences → Actions).
             aiActionSync = AIActionSync.shared
 
@@ -160,6 +162,9 @@ class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCenterDele
             // the registry callbacks are already wired.
             startExtensionWatcher()
             if NSClassFromString("XCTestCase") == nil {
+                await PersonalFeatures.installBundledExtensions()
+                PersonalFeatures.handleLaunchEnvironment()
+                PersonalFeatures.showDemoPopup(using: popupController)
                 ExtensionUpdateManager.shared.startAutomaticUpdates()
             }
         }

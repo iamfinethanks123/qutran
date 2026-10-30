@@ -1,0 +1,41 @@
+{
+  "identifier": "personal.texttools",
+  "name": "文字工具",
+  "description": "離線文字處理：修復斷行、字數、大細楷、JSON、Base64、URL 編碼。",
+  "version": "1.0.0",
+  "output": "text",
+  "result": "paste-or-copy",
+  "actions": [
+    {
+      "id": "text",
+      "title": "文字",
+      "icon": "symbol(textformat)",
+      "type": "group",
+      "keywords": ["text", "文字", "case"],
+      "subActions": [
+        { "id": "fixLineBreaks", "title": "修復斷行", "icon": "symbol(text.alignleft)", "type": "javascript", "script": "fixLineBreaks.js", "regex": "\\S[\\r\\n]+\\S", "keywords": ["line break", "pdf", "斷行"] },
+        { "id": "countText", "title": "字數", "icon": "symbol(number)", "type": "javascript", "script": "countText.js", "inline": true, "result": "copy", "keywords": ["count", "word count", "字數"] },
+        { "id": "upper", "title": "大寫", "icon": "symbol(textformat.characters.uppercase)", "type": "javascript", "script": "upper.js", "regex": "[a-z]", "keywords": ["uppercase", "大寫"] },
+        { "id": "lower", "title": "小寫", "icon": "symbol(textformat.characters.lowercase)", "type": "javascript", "script": "lower.js", "regex": "[A-Z]", "keywords": ["lowercase", "小寫"] },
+        { "id": "titleCase", "title": "首字大寫", "icon": "symbol(textformat.characters)", "type": "javascript", "script": "titleCase.js", "regex": "[A-Za-z]", "keywords": ["title case", "首字大寫"] },
+        { "id": "snakeCase", "title": "snake_case", "icon": "symbol(underline)", "type": "javascript", "script": "snakeCase.js", "regex": "[A-Za-z]", "keywords": ["snake"] },
+        { "id": "camelCase", "title": "camelCase", "icon": "symbol(textformat.abc)", "type": "javascript", "script": "camelCase.js", "regex": "[A-Za-z]", "keywords": ["camel"] }
+      ]
+    },
+    {
+      "id": "encode",
+      "title": "編碼",
+      "icon": "symbol(chevron.left.forwardslash.chevron.right)",
+      "type": "group",
+      "keywords": ["json", "base64", "url", "encode", "編碼"],
+      "subActions": [
+        { "id": "formatJSON", "title": "JSON 格式化", "icon": "symbol(curlybraces)", "type": "javascript", "script": "formatJSON.js", "regex": "^\\s*[\\[{][\\s\\S]*[\\]}]\\s*$", "keywords": ["json", "pretty"] },
+        { "id": "minifyJSON", "title": "JSON 壓縮", "icon": "symbol(arrow.down.right.and.arrow.up.left)", "type": "javascript", "script": "minifyJSON.js", "regex": "^\\s*[\\[{][\\s\\S]*[\\]}]\\s*$", "keywords": ["json", "minify"] },
+        { "id": "base64Encode", "title": "Base64 編碼", "icon": "symbol(lock)", "type": "javascript", "script": "base64Encode.js", "keywords": ["base64", "encode"] },
+        { "id": "base64Decode", "title": "Base64 解碼", "icon": "symbol(lock.open)", "type": "javascript", "script": "base64Decode.js", "regex": "^\\s*[A-Za-z0-9+/_\\-]{4,}={0,2}\\s*$", "keywords": ["base64", "decode"] },
+        { "id": "urlEncode", "title": "URL 編碼", "icon": "symbol(link)", "type": "javascript", "script": "urlEncode.js", "keywords": ["url", "encode", "percent"] },
+        { "id": "urlDecode", "title": "URL 解碼", "icon": "symbol(link.badge.plus)", "type": "javascript", "script": "urlDecode.js", "regex": "%[0-9A-Fa-f]{2}", "keywords": ["url", "decode", "percent"] }
+      ]
+    }
+  ]
+}
