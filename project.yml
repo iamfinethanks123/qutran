@@ -26,6 +26,12 @@ targets:
       - path: PersonalExtensions
         type: folder
         buildPhase: resources
+      - path: LICENSE
+        type: file
+        buildPhase: resources
+      - path: NOTICE.md
+        type: file
+        buildPhase: resources
     info:
       path: Sources/OpenClip/Info.plist
       properties:
@@ -67,8 +73,8 @@ targets:
     settings:
       base:
         GENERATE_INFOPLIST_FILE: YES
-        MARKETING_VERSION: "1.9.2"
-        CURRENT_PROJECT_VERSION: "26"
+        MARKETING_VERSION: "0.1.0"
+        CURRENT_PROJECT_VERSION: "1"
         INFOPLIST_KEY_CFBundleShortVersionString: $(MARKETING_VERSION)
         INFOPLIST_KEY_CFBundleVersion: $(CURRENT_PROJECT_VERSION)
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon

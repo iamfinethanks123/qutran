@@ -19,6 +19,18 @@ Qutran 基於 [OpenClip](https://github.com/ganeshmshetty/openclip) 開發，以
 
 離線翻譯和繁簡轉換可在裝置上執行。下載語言包、網頁搜尋及選用的雲端 AI 服務需要網絡連線；雲端功能會把相關內容傳送至你設定的服務。
 
+## 下載安裝（未公證測試版）
+
+**[下載 Qutran v0.1.0 安裝包（DMG）](https://github.com/iamfinethanks123/qutran/releases/download/v0.1.0/Qutran-v0.1.0-universal.dmg)** · [版本說明與其他下載](https://github.com/iamfinethanks123/qutran/releases/tag/v0.1.0)
+
+需要 macOS 26 或以上。安裝包為 Universal 版本，包含 Apple silicon（arm64）及 Intel（x86_64）。
+
+1. 開啟下載的 DMG，把 **Qutran** 拖至 **Applications**。
+2. 從「應用程式」開啟 Qutran；它會顯示在選單列。
+3. 在「系統設定 → 私隱與保安 → 輔助使用」授予權限，並在 Qutran 的語言頁面下載所需翻譯語言包。
+
+**此測試版使用 ad-hoc 簽署，尚未取得 Developer ID 簽署或 Apple 公證。** 若 macOS 攔截首次開啟，請在確認下載來源後，前往「系統設定 → 私隱與保安」，按「仍要開啟／Open Anyway」並依系統提示確認。詳細步驟見 [Apple 官方指引](https://support.apple.com/en-au/102445)。
+
 ## 從原始碼建置
 
 需要 macOS 26 或以上、Xcode 26 或以上及 [XcodeGen](https://github.com/yonaskolb/XcodeGen)。以下啟動腳本以 Apple silicon（arm64）為目標。首次建置會下載 Swift 套件相依項目。
@@ -59,7 +71,9 @@ node --test Tests/PersonalExtensionsJS/tools.test.js
 
 Qutran 沿用 `~/.openclip/` 儲存本機資料；生字簿位於 `~/.openclip/personal/history.json`，擴充套件位於 `~/.openclip/extensions/`。這些執行時資料不包含在本儲存庫內。
 
-本儲存庫保留了上游的自動化與封裝腳本，其中部分仍使用 OpenClip 的名稱和發布設定。目前請使用上述原始碼建置方式安裝 Qutran。
+執行 `./scripts/package_app.sh` 可產生 `build/Qutran.dmg` 及 `build/Qutran.zip`。預設為 ad-hoc 簽署；正式簽署與公證的設定見[簽署文件](docs/developer-guide/signing-and-notarization.md)。
+
+GitHub Actions 目前停用；其餘上游發布流程仍保留 OpenClip 的設定。本次 Qutran 測試版透過本機封裝後上傳至 Releases。
 
 ## 授權與致謝
 

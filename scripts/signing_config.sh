@@ -28,7 +28,11 @@ OC_ADHOC_IDENTITY="-"
 # Absolute path to the entitlements the app bundle is signed with. Kept here so the signer and
 # the verifier can never disagree about which file is authoritative.
 oc_entitlements_path() {
-    printf '%s\n' "$OC_PROJECT_DIR/Sources/OpenClip/OpenClip.entitlements"
+    local name="OpenClip.entitlements"
+    if oc_is_adhoc "${1:-developer-id}"; then
+        name="OpenClipAdHoc.entitlements"
+    fi
+    printf '%s\n' "$OC_PROJECT_DIR/Sources/OpenClip/$name"
 }
 
 # Sources keys/signing.env if present. Called before the identity is resolved.

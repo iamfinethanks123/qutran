@@ -68,7 +68,7 @@ TEAM_ID="$(oc_team_from_identity "$IDENTITY")"
 TIMESTAMP_FLAG="--timestamp"
 if oc_is_adhoc "$IDENTITY"; then
     TIMESTAMP_FLAG="--timestamp=none"
-    echo "==> Signing ad-hoc (no Developer ID configured; not distributable)"
+    echo "==> Signing ad-hoc (no Developer ID configured; not notarized)"
 else
     echo "==> Signing with: $IDENTITY"
 fi
@@ -88,7 +88,7 @@ sign_one() {
 
 if [ -d "$TARGET" ]; then
     APP_PATH="${TARGET%/}"
-    ENTITLEMENTS="$(oc_entitlements_path)"
+    ENTITLEMENTS="$(oc_entitlements_path "$IDENTITY")"
     if [ ! -f "$ENTITLEMENTS" ]; then
         echo "error: entitlements file missing at $ENTITLEMENTS" >&2
         exit 1

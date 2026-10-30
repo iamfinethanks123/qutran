@@ -127,6 +127,9 @@ if [ "$IS_APP" -eq 1 ]; then
     #    rejects and that a plain `xcodebuild build` adds to every Release build.
     # -----------------------------------------------------------------------
     ENTITLEMENTS_FILE="$(oc_entitlements_path)"
+    if [ "$IS_ADHOC" -eq 1 ]; then
+        ENTITLEMENTS_FILE="$(oc_entitlements_path -)"
+    fi
     # The signed entitlements go to a file rather than a pipe: the comparison program arrives on
     # python's stdin via heredoc, so a pipe into it would be swallowed and every artifact would
     # look like it had no entitlements at all.
@@ -153,9 +156,9 @@ problems = []
 if missing:
     problems.append("missing: " + ", ".join(missing))
 if extra:
-    problems.append("not declared in OpenClip.entitlements: " + ", ".join(extra))
+    problems.append("not declared in " + expected_path.rsplit("/", 1)[-1] + ": " + ", ".join(extra))
 if changed:
-    problems.append("value differs from OpenClip.entitlements: " + ", ".join(changed))
+    problems.append("value differs from " + expected_path.rsplit("/", 1)[-1] + ": " + ", ".join(changed))
 
 if problems:
     print("; ".join(problems))
@@ -163,9 +166,9 @@ if problems:
 sys.exit(0)
 PY
     )"; then
-        pass "entitlements match Sources/OpenClip/OpenClip.entitlements"
+        pass "entitlements match ${ENTITLEMENTS_FILE#"$OC_PROJECT_DIR"/}"
     else
-        fail "entitlements do not match Sources/OpenClip/OpenClip.entitlements — $ENT_DIFF"
+        fail "entitlements do not match ${ENTITLEMENTS_FILE#"$OC_PROJECT_DIR"/} — $ENT_DIFF"
     fi
     rm -f "$SIGNED_ENTITLEMENTS"
 
@@ -298,9 +301,9 @@ fi
 # The hardened runtime and entitlements are properties of the app; a disk image only carries a
 # signature, so its summary must not claim more than was checked.
 if [ "$IS_ADHOC" -eq 1 ] && [ "$IS_APP" -eq 1 ]; then
-    echo "==> $LABEL is a valid ad-hoc build (hardened, entitlements as declared) — not distributable."
+    echo "==> $LABEL is a valid ad-hoc build (hardened, entitlements as declared) — not notarized."
 elif [ "$IS_ADHOC" -eq 1 ]; then
-    echo "==> $LABEL is ad-hoc signed — not distributable."
+    echo "==> $LABEL is ad-hoc signed — not notarized."
 else
     echo "==> $LABEL passed all --require $REQUIRE checks."
 fi

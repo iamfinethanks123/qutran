@@ -1,12 +1,12 @@
 # DMG Installer
 
-`OpenClip.dmg` is a styled disk image: a rendered background, the app icon on the left, a
+`Qutran.dmg` is a styled disk image: a rendered background, the app icon on the left, a
 drop link to `/Applications` on the right, and an arrow between them. It is produced by
 `scripts/make_dmg.sh`, which both `scripts/package_app.sh` and `scripts/release_update.sh`
 call, so local packaging and CI releases always emit the same layout.
 
 ```bash
-./scripts/make_dmg.sh /path/to/OpenClip.app build/OpenClip.dmg
+./scripts/make_dmg.sh /path/to/Qutran.app build/Qutran.dmg
 ```
 
 There is nothing to install first. The script uses [`dmgbuild`](https://dmgbuild.readthedocs.io),
@@ -47,7 +47,7 @@ properties at the top of `assets/dmg/background.html` and the constants near the
 | Icon size | 128 pt |
 | Icon label text size | 13 pt |
 | Icon row centre | y = 210 |
-| `OpenClip.app` centre | x = 170 |
+| `Qutran.app` centre | x = 170 |
 | `Applications` centre | x = 490 |
 
 Finder positions are the **centre** of each icon, measured from the top-left of the window
@@ -148,11 +148,11 @@ inside a 660 × 400 window — so they scroll vertically for anyone with the tab
 ## Verifying a change
 
 ```bash
-./scripts/make_dmg.sh /path/to/OpenClip.app /tmp/OpenClip.dmg
-open /tmp/OpenClip.dmg
-osascript -e 'tell application "Finder" to tell disk "OpenClip"
+./scripts/make_dmg.sh /path/to/Qutran.app /tmp/Qutran.dmg
+open /tmp/Qutran.dmg
+osascript -e 'tell application "Finder" to tell disk "Qutran"
   {bounds of container window, icon size of icon view options of container window,
-   position of item "OpenClip.app", position of item "Applications"}
+   position of item "Qutran.app", position of item "Applications"}
 end tell'
 ```
 
@@ -165,7 +165,7 @@ Finder will not enumerate the hidden items, so read the saved positions straight
 ```bash
 python3 - <<'EOF'
 import re, struct
-d = open('/Volumes/OpenClip/.DS_Store', 'rb').read()
+d = open('/Volumes/Qutran/.DS_Store', 'rb').read()
 for m in re.finditer(b'Iloc', d):
     s = m.start()
     for n in range(1, 40):

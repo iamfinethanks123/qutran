@@ -1,7 +1,7 @@
 #!/bin/bash
 # package_app.sh
 #
-# Builds OpenClip in Release mode and packages it into build/OpenClip.zip and build/OpenClip.dmg.
+# Builds Qutran in Release mode and packages it into build/Qutran.zip and build/Qutran.dmg.
 #
 # Signing is opt-in. With nothing configured the app is signed ad-hoc — with the hardened runtime
 # and the real entitlements still applied — so a fresh clone and a fork's CI run both work without
@@ -39,15 +39,16 @@ fi
 echo "Generating Xcode project..."
 xcodegen generate
 
-echo "Building OpenClip (Release)..."
+echo "Building Qutran (Release)..."
 # The build is left ad-hoc signed whatever the final identity is, and scripts/sign_artifact.sh
 # re-signs the finished bundle. That keeps one signing path for contributors and releases alike,
 # and it is the only way to get Sparkle's nested helpers off the ad-hoc signature they ship with.
-xcodebuild -project OpenClip.xcodeproj -scheme OpenClip -configuration Release -destination 'generic/platform=macOS' ARCHS='arm64 x86_64' ONLY_ACTIVE_ARCH=NO DEPLOYMENT_POSTPROCESSING=YES STRIP_INSTALLED_PRODUCT=YES CLANG_ENABLE_CODE_COVERAGE=NO build > /dev/null
+DERIVED_DATA="$PROJECT_DIR/build.noindex/ReleaseDerivedData"
+xcodebuild -project OpenClip.xcodeproj -scheme OpenClip -configuration Release -destination 'generic/platform=macOS' -derivedDataPath "$DERIVED_DATA" ARCHS='arm64 x86_64' ONLY_ACTIVE_ARCH=NO DEPLOYMENT_POSTPROCESSING=YES STRIP_INSTALLED_PRODUCT=YES CLANG_ENABLE_CODE_COVERAGE=NO build > /dev/null
 
-BUILT_APP="$(find ~/Library/Developer/Xcode/DerivedData/OpenClip-*/Build/Products/Release -name "OpenClip.app" | head -n 1)"
+BUILT_APP="$DERIVED_DATA/Build/Products/Release/Qutran.app"
 
-if [ -z "$BUILT_APP" ]; then
+if [ ! -d "$BUILT_APP" ]; then
     echo "Error: Release build output not found."
     exit 1
 fi
@@ -56,7 +57,7 @@ fi
 
 # CI runs this script on every push, so this is where an arm64-only regression gets caught
 # before it can reach a tag.
-"$PROJECT_DIR/scripts/verify_universal.sh" "$BUILT_APP" "OpenClip.app"
+"$PROJECT_DIR/scripts/verify_universal.sh" "$BUILT_APP" "Qutran.app"
 
 # How far the signature has to go depends on what was configured. An ad-hoc build still has to
 # be hardened and carry exactly the declared entitlements; a Developer ID build additionally
@@ -72,9 +73,12 @@ fi
 
 "$PROJECT_DIR/scripts/verify_signing.sh" "$BUILT_APP" --require "$REQUIRE"
 
+echo "Verifying Qutran launches..."
+"$BUILT_APP/Contents/MacOS/Qutran" --version
+
 mkdir -p "$PROJECT_DIR/build"
-OUTPUT_ZIP="$PROJECT_DIR/build/OpenClip.zip"
-OUTPUT_DMG="$PROJECT_DIR/build/OpenClip.dmg"
+OUTPUT_ZIP="$PROJECT_DIR/build/Qutran.zip"
+OUTPUT_DMG="$PROJECT_DIR/build/Qutran.dmg"
 
 # Both archives are cut after the app is signed and stapled, so the ticket travels with them.
 echo "Packaging $BUILT_APP into $OUTPUT_ZIP..."
@@ -96,6 +100,6 @@ echo "  ZIP: $OUTPUT_ZIP"
 echo "  DMG: $OUTPUT_DMG"
 if oc_is_adhoc "$IDENTITY"; then
     echo ""
-    echo "note: this build is ad-hoc signed. Gatekeeper will refuse it on any other Mac."
-    echo "      Set OPENCLIP_SIGN_IDENTITY to build something distributable."
+    echo "note: this build is ad-hoc signed and not notarized. macOS may block its first launch after downloading."
+    echo "      A public test release needs clear Open Anyway instructions; a normal release needs Developer ID signing and notarization."
 fi

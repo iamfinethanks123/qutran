@@ -1,17 +1,17 @@
 #!/bin/bash
-# Builds the styled OpenClip disk image (rendered background, icon layout, volume icon).
+# Builds the styled Qutran disk image (rendered background, icon layout, volume icon).
 # Layout constants below must stay in sync with assets/dmg/background.html — see docs/dmg.md.
 #
-# Usage: ./scripts/make_dmg.sh <path-to-OpenClip.app> <output.dmg> [volume-name]
+# Usage: ./scripts/make_dmg.sh <path-to-Qutran.app> <output.dmg> [volume-name]
 
 set -euo pipefail
 
 APP_PATH="${1:-}"
 OUTPUT_DMG="${2:-}"
-VOLUME_NAME="${3:-OpenClip}"
+VOLUME_NAME="${3:-Qutran}"
 
 if [ -z "$APP_PATH" ] || [ -z "$OUTPUT_DMG" ]; then
-    echo "usage: $0 <path-to-OpenClip.app> <output.dmg> [volume-name]" >&2
+    echo "usage: $0 <path-to-Qutran.app> <output.dmg> [volume-name]" >&2
     exit 2
 fi
 
@@ -84,7 +84,7 @@ ICONSET="$WORK_DIR/VolumeIcon.iconset"
 mkdir -p "$ICONSET"
 for SPEC in "16 16x16" "32 16x16@2x" "32 32x32" "64 32x32@2x" "128 128x128" "256 128x128@2x" "256 256x256" "512 256x256@2x" "512 512x512" "1024 512x512@2x"; do
     set -- $SPEC
-    sips -z "$1" "$1" "$PROJECT_DIR/assets/app-icon.png" --out "$ICONSET/icon_$2.png" > /dev/null
+    sips -z "$1" "$1" "$PROJECT_DIR/Sources/OpenClip/Assets.xcassets/AppIcon.appiconset/AppIcon-1024.png" --out "$ICONSET/icon_$2.png" > /dev/null
 done
 iconutil -c icns "$ICONSET" -o "$WORK_DIR/VolumeIcon.icns"
 
@@ -103,7 +103,7 @@ show_toolbar = False
 show_pathbar = False
 show_sidebar = False
 
-window_rect = ((200, 100000), ($WINDOW_W, $WINDOW_H))
+window_rect = ((200, 160), ($WINDOW_W, $WINDOW_H))
 icon_size = $ICON_SIZE
 text_size = $TEXT_SIZE
 icon_locations = {

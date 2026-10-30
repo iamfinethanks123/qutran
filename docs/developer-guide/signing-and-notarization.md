@@ -20,13 +20,14 @@ Signing is **opt-in**, and everything works without it.
 | Network access | not needed | not needed | required (timestamp + notary) |
 | Hardened runtime | yes | yes | yes |
 | Entitlements | yes | yes | yes |
-| Opens on another Mac | no | no | yes |
+| Accepted by default Gatekeeper settings | no | no | yes, after notarization |
 | Used for | local builds, tests, PR/fork CI | local builds with a stable signing identity | releases |
 
-A fresh clone builds, packages, and runs with no certificate at all. The only thing an ad-hoc build
-cannot do is leave the machine that produced it: Gatekeeper has nothing to trust, so it refuses to
-launch. Everything else — the hardened runtime, the entitlements, the inside-out signing order — is
-identical in both modes, so a contributor is exercising the same code path a release does.
+A fresh clone builds, packages, and runs with no certificate at all. Downloaded ad-hoc builds are
+blocked by Gatekeeper by default. An explicitly labelled test release can document Apple's
+[Open Anyway procedure](https://support.apple.com/en-au/102445); a normal release needs Developer ID
+signing and notarization. Ad-hoc builds use the framework-loading exception described below, while
+both modes retain the hardened runtime and inside-out signing order.
 
 ```bash
 ./scripts/package_app.sh                                # ad-hoc
@@ -211,7 +212,7 @@ either ever comes back.
 
 ## Entitlements
 
-`Sources/OpenClip/OpenClip.entitlements` grants exactly one thing:
+Developer ID builds use `Sources/OpenClip/OpenClip.entitlements`, which grants exactly one thing:
 
 ```
 com.apple.security.automation.apple-events
@@ -222,21 +223,28 @@ rather than using `NSAppleScript`, and TCC attributes those Apple events to Open
 responsible process, so the app needs both this entitlement and the `NSAppleEventsUsageDescription`
 string that `project.yml` puts in `Info.plist`.
 
-Deliberately **not** granted:
+Ad-hoc builds use `Sources/OpenClip/OpenClipAdHoc.entitlements`, which additionally grants
+`com.apple.security.cs.disable-library-validation`. Ad-hoc signatures have no Team ID, so the
+hardened runtime otherwise refuses to load the bundled Core and Sparkle frameworks. This exception
+is applied only by the ad-hoc signer. Developer ID builds keep library validation enabled.
+`scripts/package_app.sh` runs the signed app with `--version` before archiving to catch launch
+failures that structural signature verification cannot detect.
+
+Deliberately **not** granted to Developer ID builds:
 
 | Entitlement | Why not |
 |---|---|
 | `com.apple.security.cs.allow-jit` | JavaScriptCore extensions run correctly under the hardened runtime without it. Measured: a hot three-million-iteration loop evaluates in the same time signed with `--options runtime` as unsigned. The W^X exception buys nothing here. |
-| `com.apple.security.cs.disable-library-validation` | Nothing is `dlopen`'d. Extensions are JavaScript, shell, AppleScript, or URL templates — never native code. |
+| `com.apple.security.cs.disable-library-validation` | Bundled frameworks are signed by the same team. Extensions are JavaScript, shell, AppleScript, or URL templates — never native code. |
 | `com.apple.security.cs.allow-dyld-environment-variables` | Script actions get their environment from `ShellProcessRunner`; nothing injects `DYLD_*` into OpenClip itself. |
 | App Sandbox | Incompatible with Accessibility-based text capture, `CGEvent` key synthesis, `~/.openclip`, and arbitrary script actions. Notarization does not require it. |
 
-Two rules when editing that file:
+Two rules when editing either file:
 
 1. **No XML comments.** `codesign`'s entitlement parser (AMFI) rejects them outright with
    `AMFIUnserializeXML: syntax error`, and the build fails at the signing step. Rationale goes in
    this document, not in the plist.
-2. `scripts/verify_signing.sh` compares the **signed** entitlements against this file and fails on
+2. `scripts/verify_signing.sh` compares the **signed** entitlements against the matching file and fails on
    any difference in either direction. Adding an entitlement is therefore a visible, reviewable
    diff rather than something that appears only in shipped binaries.
 
