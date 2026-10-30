@@ -182,7 +182,7 @@ private struct HubSidebar: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             VStack(alignment: .leading, spacing: 3) {
-                Text("OpenClip")
+                Text("Qutran")
                     .font(HubTheme.display(19))
                     .foregroundStyle(HubTheme.ink)
                 Text("離線 · 本機 · 私隱")

@@ -52,7 +52,7 @@ struct AISystemPromptSection: View {
                         if isCustomized {
                             Text("Custom")
                                 .font(.caption2.weight(.semibold))
-                                .foregroundStyle(Color.accentColor)
+                                .foregroundStyle(Color.qutranAccent)
                         }
                     }
                     .contentShape(Rectangle())
@@ -69,7 +69,7 @@ struct AISystemPromptSection: View {
                     }
                     .font(.caption)
                     .buttonStyle(.plain)
-                    .foregroundStyle(Color.accentColor)
+                    .foregroundStyle(Color.qutranAccent)
                     .disabled(!isCustomized)
                 }
             }

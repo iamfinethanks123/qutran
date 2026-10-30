@@ -89,7 +89,7 @@ struct ToastView: View {
             } else if let symbol = feedback.symbolName {
                 Image(systemName: symbol)
                     .font(.system(size: 10 * scale, weight: .medium))
-                    .foregroundColor(feedback.style == .error ? Color.red : (feedback.style == .success ? Color.accentColor : activeForeground))
+                    .foregroundColor(feedback.style == .error ? Color.red : (feedback.style == .success ? Color.qutranAccent : activeForeground))
             }
             Text(displayedMessage)
                 .font(.system(size: 11 * scale, weight: .regular))

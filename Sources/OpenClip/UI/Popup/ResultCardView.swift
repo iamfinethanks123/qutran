@@ -339,11 +339,11 @@ public struct ResultCardView: View {
                 if let icon = payload.icon {
                     // The producing action's icon, so extension results keep their identity.
                     ActionIconView(icon: icon, size: 13)
-                        .foregroundColor(.accentColor)
+                        .foregroundColor(Color.qutranAccent)
                 } else {
                     Image(systemName: "sparkle")
                         .font(.system(size: 12, weight: .semibold))
-                        .foregroundColor(.accentColor)
+                        .foregroundColor(Color.qutranAccent)
                 }
                 Text(payload.title)
                     .font(.system(size: 13, weight: .semibold))
@@ -428,7 +428,7 @@ public struct ResultCardView: View {
                     effectiveTheme: effectiveTheme,
                     colorScheme: colorScheme,
                     isHovered: isDiffHovered,
-                    tint: showsDiff ? .accentColor : nil
+                    tint: showsDiff ? Color.qutranAccent : nil
                 )
                 .contentShape(Circle())
         }
@@ -450,7 +450,7 @@ public struct ResultCardView: View {
                     effectiveTheme: effectiveTheme,
                     colorScheme: colorScheme,
                     isHovered: isPinHovered,
-                    tint: isPinned ? .accentColor : nil
+                    tint: isPinned ? Color.qutranAccent : nil
                 )
                 .contentShape(Circle())
         }
@@ -882,7 +882,7 @@ public struct ResultCardView: View {
                 } label: {
                     Image(systemName: "arrow.up.circle.fill")
                         .font(.system(size: 17, weight: .semibold))
-                        .foregroundColor(.accentColor)
+                        .foregroundColor(Color.qutranAccent)
                 }
                 .buttonStyle(.plain)
                 .help(String(localized: "Send follow-up (⏎)"))
@@ -1017,7 +1017,7 @@ public struct ResultCardView: View {
                     effectiveTheme: effectiveTheme,
                     colorScheme: colorScheme,
                     isHovered: isSaveHovered,
-                    tint: .accentColor
+                    tint: Color.qutranAccent
                 )
             }
             .buttonStyle(.plain)
@@ -1364,7 +1364,7 @@ public struct ResultCardView: View {
                     effectiveTheme: effectiveTheme,
                     colorScheme: colorScheme,
                     isHovered: isCopyHovered,
-                    tint: isCopyPrimary ? .accentColor : nil
+                    tint: isCopyPrimary ? Color.qutranAccent : nil
                 )
             }
             .buttonStyle(.plain)
@@ -1392,7 +1392,7 @@ public struct ResultCardView: View {
                         effectiveTheme: effectiveTheme,
                         colorScheme: colorScheme,
                         isHovered: isPasteHovered,
-                        tint: .accentColor
+                        tint: Color.qutranAccent
                     )
                 }
                 .buttonStyle(.plain)

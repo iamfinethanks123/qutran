@@ -51,7 +51,7 @@ enum PopupThemeModel {
 
     /// Slightly softened accent for the popup action bars.
     static var barHoverFill: Color {
-        Color(nsColor: NSColor.controlAccentColor.blended(withFraction: 0.08, of: .white) ?? .controlAccentColor)
+        Color(nsColor: NSColor.qutranAccent.blended(withFraction: 0.08, of: .white) ?? .qutranAccent)
     }
 
     /// The secondary foreground color (hints, badges) for the given effective theme token.

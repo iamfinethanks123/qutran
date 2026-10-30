@@ -8,9 +8,9 @@ final class PersonalExtensionsTests: XCTestCase {
 
     override func setUp() async throws {
         let repoRoot = URL(fileURLWithPath: #filePath).deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent()
-        // Under the repo's build/ (no symlinked components): the module loader's containment check
+        // Under the repo's build.noindex/ (no symlinked components): the module loader's containment check
         // compares canonical paths, which a /var -> /private/var temp dir trips.
-        tempDir = repoRoot.appendingPathComponent("build/personal-ext-tests-\(UUID().uuidString)")
+        tempDir = repoRoot.appendingPathComponent("build.noindex/personal-ext-tests-\(UUID().uuidString)")
         try FileManager.default.createDirectory(at: tempDir, withIntermediateDirectories: true)
         let source = repoRoot.appendingPathComponent("PersonalExtensions")
         for package in try FileManager.default.contentsOfDirectory(at: source, includingPropertiesForKeys: nil) {

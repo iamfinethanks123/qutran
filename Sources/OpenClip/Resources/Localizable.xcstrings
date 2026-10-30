@@ -706,25 +706,31 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "关于 OpenClip"
+            "value": "关于 Qutran"
           }
         },
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "關於 OpenClip"
+            "value": "關於 Qutran"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "À propos d'OpenClip"
+            "value": "À propos d'Qutran"
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "OpenClip について"
+            "value": "Qutran について"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "About Qutran"
           }
         }
       }
@@ -1854,25 +1860,31 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "在系统设置中允许 OpenClip 进行屏幕录制，然后重新打开 OpenClip。"
+            "value": "在系统设置中允许 Qutran 进行屏幕录制，然后重新打开 Qutran。"
           }
         },
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "請在系統設定中允許 OpenClip 進行螢幕錄製，然後重新開啟 OpenClip。"
+            "value": "請在系統設定中允許 Qutran 進行螢幕錄製，然後重新開啟 Qutran。"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Autorisez l’enregistrement de l’écran pour OpenClip dans Réglages Système, puis rouvrez OpenClip."
+            "value": "Autorisez l’enregistrement de l’écran pour Qutran dans Réglages Système, puis rouvrez Qutran."
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "システム設定で OpenClip の画面収録を許可してから、OpenClip を再度開いてください。"
+            "value": "システム設定で Qutran の画面収録を許可してから、Qutran を再度開いてください。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Allow Screen Recording for Qutran in System Settings, then reopen Qutran."
           }
         }
       }
@@ -6866,25 +6878,31 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "发现并安装适用于 OpenClip 的扩展"
+            "value": "发现并安装适用于 Qutran 的扩展"
           }
         },
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "探索並安裝適用於 OpenClip 的擴充功能"
+            "value": "探索並安裝適用於 Qutran 的擴充功能"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Découvrez et installez des extensions pour OpenClip"
+            "value": "Découvrez et installez des extensions pour Qutran"
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "OpenClip の拡張機能を見つけてインストール"
+            "value": "Qutran の拡張機能を見つけてインストール"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Discover and install extensions for Qutran"
           }
         }
       }
@@ -8910,25 +8928,31 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "完成 OpenClip 设置"
+            "value": "完成 Qutran 设置"
           }
         },
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "完成 OpenClip 設定"
+            "value": "完成 Qutran 設定"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Terminer la configuration d’OpenClip"
+            "value": "Terminer la configuration d’Qutran"
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "OpenClipのセットアップを完了する"
+            "value": "Qutranのセットアップを完了する"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Finish setting up Qutran"
           }
         }
       }
@@ -8994,25 +9018,31 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "在系统设置中打开 OpenClip 旁边的开关。"
+            "value": "在系统设置中打开 Qutran 旁边的开关。"
           }
         },
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "在「系統設定」中開啟 OpenClip 旁邊的開關。"
+            "value": "在「系統設定」中開啟 Qutran 旁邊的開關。"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Activez l’interrupteur à côté d’OpenClip dans Réglages Système."
+            "value": "Activez l’interrupteur à côté d’Qutran dans Réglages Système."
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "システム設定でOpenClipの横にあるスイッチをオンにしてください。"
+            "value": "システム設定でQutranの横にあるスイッチをオンにしてください。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Flip the switch next to Qutran to ON in System Settings."
           }
         }
       }
@@ -9722,25 +9752,31 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "隐藏 OpenClip"
+            "value": "隐藏 Qutran"
           }
         },
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "隱藏 OpenClip"
+            "value": "隱藏 Qutran"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Masquer OpenClip"
+            "value": "Masquer Qutran"
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "OpenClip を非表示"
+            "value": "Qutran を非表示"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hide Qutran"
           }
         }
       }
@@ -9862,25 +9898,31 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "选中的文本默认保留在你的 Mac 上。OpenClip 不会在后台收集数据，仅在你明确调用云端 AI 或浏览器动作时才会传输文本。"
+            "value": "选中的文本默认保留在你的 Mac 上。Qutran 不会在后台收集数据，仅在你明确调用云端 AI 或浏览器动作时才会传输文本。"
           }
         },
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "選取的文字預設保留在你的 Mac 上。OpenClip 絕不會在背景收集資料，只有在明確叫用雲端 AI 或瀏覽器動作時才會傳輸文字。"
+            "value": "選取的文字預設保留在你的 Mac 上。Qutran 絕不會在背景收集資料，只有在明確叫用雲端 AI 或瀏覽器動作時才會傳輸文字。"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Le texte sélectionné reste sur votre Mac par défaut. OpenClip ne collecte jamais de données en arrière-plan et ne transmet du texte que lorsque vous déclenchez explicitement des actions d’IA cloud ou de navigateur."
+            "value": "Le texte sélectionné reste sur votre Mac par défaut. Qutran ne collecte jamais de données en arrière-plan et ne transmet du texte que lorsque vous déclenchez explicitement des actions d’IA cloud ou de navigateur."
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "選択されたテキストはデフォルトでお使いのMac内にとどまります。OpenClipがバックグラウンドでデータを収集することはなく、クラウドAIやブラウザアクションを明示的に実行した場合にのみテキストを送信します。"
+            "value": "選択されたテキストはデフォルトでお使いのMac内にとどまります。Qutranがバックグラウンドでデータを収集することはなく、クラウドAIやブラウザアクションを明示的に実行した場合にのみテキストを送信します。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Highlighted text stays on your Mac by default. Qutran never collects background data, and only transmits text when you explicitly invoke cloud AI or browser actions."
           }
         }
       }
@@ -10730,25 +10772,31 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "在 macOS 菜单栏中保持显示 OpenClip 图标，以便快速访问偏好设置和更新。"
+            "value": "在 macOS 菜单栏中保持显示 Qutran 图标，以便快速访问偏好设置和更新。"
           }
         },
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "在 macOS 選單列中保持顯示 OpenClip 圖示，以便快速存取偏好設定和更新。"
+            "value": "在 macOS 選單列中保持顯示 Qutran 圖示，以便快速存取偏好設定和更新。"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Garder OpenClip visible dans la barre des menus de macOS pour un accès rapide aux préférences et aux mises à jour."
+            "value": "Garder Qutran visible dans la barre des menus de macOS pour un accès rapide aux préférences et aux mises à jour."
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "環境設定やアップデートにすばやくアクセスできるよう、macOSのメニューバーにOpenClipを表示したままにします。"
+            "value": "環境設定やアップデートにすばやくアクセスできるよう、macOSのメニューバーにQutranを表示したままにします。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keep Qutran visible in the macOS menu bar for quick access to preferences and updates."
           }
         }
       }
@@ -13474,25 +13522,31 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "OpenClip 已更新"
+            "value": "Qutran 已更新"
           }
         },
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "OpenClip 已更新"
+            "value": "Qutran 已更新"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "OpenClip a été mis à jour"
+            "value": "Qutran a été mis à jour"
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "OpenClipがアップデートされました"
+            "value": "Qutranがアップデートされました"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Qutran Has Been Updated"
           }
         }
       }
@@ -13502,25 +13556,31 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "OpenClip 权限"
+            "value": "Qutran 权限"
           }
         },
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "OpenClip 權限"
+            "value": "Qutran 權限"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Autorisations d’OpenClip"
+            "value": "Autorisations d’Qutran"
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "OpenClipのアクセス権"
+            "value": "Qutranのアクセス権"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Qutran Permissions"
           }
         }
       }
@@ -13530,25 +13590,31 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "OpenClip 偏好设置"
+            "value": "Qutran 偏好设置"
           }
         },
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "OpenClip 偏好設定"
+            "value": "Qutran 偏好設定"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Préférences d’OpenClip"
+            "value": "Préférences d’Qutran"
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "OpenClip 環境設定"
+            "value": "Qutran 環境設定"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Qutran Preferences"
           }
         }
       }
@@ -13558,25 +13624,31 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "OpenClip 有可用更新"
+            "value": "Qutran 有可用更新"
           }
         },
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "OpenClip 有可用更新"
+            "value": "Qutran 有可用更新"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Mise à jour OpenClip disponible"
+            "value": "Mise à jour Qutran disponible"
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "OpenClip アップデートが利用可能"
+            "value": "Qutran アップデートが利用可能"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Qutran Update Available"
           }
         }
       }
@@ -13586,25 +13658,31 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "OpenClip 更新已就绪"
+            "value": "Qutran 更新已就绪"
           }
         },
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "OpenClip 更新已就緒"
+            "value": "Qutran 更新已就緒"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Mise à jour OpenClip prête"
+            "value": "Mise à jour Qutran prête"
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "OpenClip アップデート準備完了"
+            "value": "Qutran アップデート準備完了"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Qutran Update Ready"
           }
         }
       }
@@ -13614,25 +13692,31 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "OpenClip 已更新"
+            "value": "Qutran 已更新"
           }
         },
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "OpenClip 已更新"
+            "value": "Qutran 已更新"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "OpenClip mis à jour"
+            "value": "Qutran mis à jour"
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "OpenClipがアップデートされました"
+            "value": "Qutranがアップデートされました"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Qutran Updated"
           }
         }
       }
@@ -13642,25 +13726,25 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "OpenClip 无法复制扩展：%@"
+            "value": "Qutran 无法复制扩展：%@"
           }
         },
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "OpenClip 無法複製擴充功能：%@"
+            "value": "Qutran 無法複製擴充功能：%@"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "OpenClip n’a pas pu dupliquer l’extension : %@"
+            "value": "Qutran n’a pas pu dupliquer l’extension : %@"
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "OpenClip は拡張機能を複製できませんでした: %@"
+            "value": "Qutran は拡張機能を複製できませんでした: %@"
           }
         }
       }
@@ -13670,25 +13754,25 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "OpenClip 无法安装“%@”：%@"
+            "value": "Qutran 无法安装“%@”：%@"
           }
         },
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "OpenClip 無法安裝「%@」：%@"
+            "value": "Qutran 無法安裝「%@」：%@"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "OpenClip n’a pas pu installer « %@ » : %@"
+            "value": "Qutran n’a pas pu installer « %@ » : %@"
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "OpenClipは「%@」をインストールできませんでした: %@"
+            "value": "Qutranは「%@」をインストールできませんでした: %@"
           }
         }
       }
@@ -13698,25 +13782,25 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "OpenClip 无法移除扩展：%@"
+            "value": "Qutran 无法移除扩展：%@"
           }
         },
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "OpenClip 無法移除擴充功能：%@"
+            "value": "Qutran 無法移除擴充功能：%@"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "OpenClip n’a pas pu supprimer l’extension : %@"
+            "value": "Qutran n’a pas pu supprimer l’extension : %@"
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "OpenClipは拡張機能を削除できませんでした: %@"
+            "value": "Qutranは拡張機能を削除できませんでした: %@"
           }
         }
       }
@@ -13726,25 +13810,31 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "OpenClip 已检测到选中内容！动作栏已出现。"
+            "value": "Qutran 已检测到选中内容！动作栏已出现。"
           }
         },
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "OpenClip 已偵測到選取內容！動作列已啟用。"
+            "value": "Qutran 已偵測到選取內容！動作列已啟用。"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "OpenClip a détecté une sélection ! La barre d’actions est active."
+            "value": "Qutran a détecté une sélection ! La barre d’actions est active."
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "OpenClipが選択を検出しました！アクションバーが有効です。"
+            "value": "Qutranが選択を検出しました！アクションバーが有効です。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Qutran detected selection! The action bar is active."
           }
         }
       }
@@ -13754,25 +13844,31 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "OpenClip 已暂停"
+            "value": "Qutran 已暂停"
           }
         },
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "OpenClip 已暫停"
+            "value": "Qutran 已暫停"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "OpenClip est suspendu"
+            "value": "Qutran est suspendu"
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "OpenClip は一時停止中です"
+            "value": "Qutran は一時停止中です"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Qutran is paused"
           }
         }
       }
@@ -13782,25 +13878,31 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "OpenClip 需要辅助功能权限，才能检测选中文本并显示动作栏。"
+            "value": "Qutran 需要辅助功能权限，才能检测选中文本并显示动作栏。"
           }
         },
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "OpenClip 需要「輔助使用」權限以偵測選取的文字並顯示動作列。"
+            "value": "Qutran 需要「輔助使用」權限以偵測選取的文字並顯示動作列。"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "OpenClip a besoin de l’accès à l’accessibilité pour détecter le texte sélectionné et afficher les barres d’actions."
+            "value": "Qutran a besoin de l’accès à l’accessibilité pour détecter le texte sélectionné et afficher les barres d’actions."
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "OpenClipが選択されたテキストを検出し、アクションバーを表示するにはアクセシビリティのアクセス権が必要です。"
+            "value": "Qutranが選択されたテキストを検出し、アクションバーを表示するにはアクセシビリティのアクセス権が必要です。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Qutran needs Accessibility access to detect selected text and display action bars."
           }
         }
       }
@@ -13810,25 +13912,25 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "OpenClip 想要从 %2$@ 安装扩展“%1$@”。扩展可在你选中文本时运行脚本。请确认你信任该来源后再继续。"
+            "value": "Qutran 想要从 %2$@ 安装扩展“%1$@”。扩展可在你选中文本时运行脚本。请确认你信任该来源后再继续。"
           }
         },
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "OpenClip 想要從 %2$@ 安裝擴充功能「%1$@」。擴充功能可在你選取文字時執行腳本。請確認你信任該來源後再繼續。"
+            "value": "Qutran 想要從 %2$@ 安裝擴充功能「%1$@」。擴充功能可在你選取文字時執行腳本。請確認你信任該來源後再繼續。"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "OpenClip souhaite installer l’extension « %1$@ » depuis %2$@. Les extensions peuvent exécuter des scripts lorsque vous sélectionnez du texte. Ne continuez que si vous faites confiance à cette source."
+            "value": "Qutran souhaite installer l’extension « %1$@ » depuis %2$@. Les extensions peuvent exécuter des scripts lorsque vous sélectionnez du texte. Ne continuez que si vous faites confiance à cette source."
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "OpenClipは%2$@から拡張機能「%1$@」をインストールしようとしています。拡張機能はテキスト選択時にスクリプトを実行できます。この提供元を信頼できる場合のみ続行してください。"
+            "value": "Qutranは%2$@から拡張機能「%1$@」をインストールしようとしています。拡張機能はテキスト選択時にスクリプトを実行できます。この提供元を信頼できる場合のみ続行してください。"
           }
         }
       }
@@ -13838,25 +13940,31 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "默认情况下 OpenClip 在所有应用中生效。点击“添加应用”可配置按应用规则或排除项。"
+            "value": "默认情况下 Qutran 在所有应用中生效。点击“添加应用”可配置按应用规则或排除项。"
           }
         },
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "OpenClip 預設在所有應用程式中運作。按一下「加入應用程式」以設定個別應用程式規則或排除項目。"
+            "value": "Qutran 預設在所有應用程式中運作。按一下「加入應用程式」以設定個別應用程式規則或排除項目。"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "OpenClip fonctionne par défaut dans toutes les applications. Cliquez sur « Ajouter une application » pour configurer des règles ou exclusions par application."
+            "value": "Qutran fonctionne par défaut dans toutes les applications. Cliquez sur « Ajouter une application » pour configurer des règles ou exclusions par application."
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "OpenClipはデフォルトですべてのアプリケーションで動作します。「アプリケーションを追加」をクリックして、アプリごとのルールや除外設定を構成してください。"
+            "value": "Qutranはデフォルトですべてのアプリケーションで動作します。「アプリケーションを追加」をクリックして、アプリごとのルールや除外設定を構成してください。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Qutran works in all applications by default. Click 'Add Application' to configure per-app rules or exclusions."
           }
         }
       }
@@ -14958,25 +15066,31 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "随时按 ⌥⌘C 即可手动打开 OpenClip。"
+            "value": "随时按 ⌥⌘C 即可手动打开 Qutran。"
           }
         },
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "隨時按 ⌥⌘C 即可手動開啟 OpenClip。"
+            "value": "隨時按 ⌥⌘C 即可手動開啟 Qutran。"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Appuyez sur ⌥⌘C à tout moment pour ouvrir manuellement OpenClip."
+            "value": "Appuyez sur ⌥⌘C à tout moment pour ouvrir manuellement Qutran."
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "いつでも ⌥⌘C を押して手動でOpenClipを開くことができます。"
+            "value": "いつでも ⌥⌘C を押して手動でQutranを開くことができます。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Press ⌥⌘C anytime to open Qutran manually."
           }
         }
       }
@@ -15378,25 +15492,31 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "退出 OpenClip"
+            "value": "退出 Qutran"
           }
         },
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "結束 OpenClip"
+            "value": "結束 Qutran"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Quitter OpenClip"
+            "value": "Quitter Qutran"
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "OpenClipを終了"
+            "value": "Qutranを終了"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Quit Qutran"
           }
         }
       }
@@ -16246,25 +16366,31 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "“捕获文本”需要此权限。允许后请重新启动 OpenClip。"
+            "value": "“捕获文本”需要此权限。允许后请重新启动 Qutran。"
           }
         },
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "「擷取文字」需要此權限。允許後請重新啟動 OpenClip。"
+            "value": "「擷取文字」需要此權限。允許後請重新啟動 Qutran。"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Requis pour la capture de texte. Redémarrez OpenClip après l’autorisation."
+            "value": "Requis pour la capture de texte. Redémarrez Qutran après l’autorisation."
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "テキストキャプチャに必要です。許可後は OpenClip を再起動してください。"
+            "value": "テキストキャプチャに必要です。許可後は Qutran を再起動してください。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Required for Capture Text. Restart Qutran after allowing it."
           }
         }
       }
@@ -16498,25 +16624,31 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "重新启动 OpenClip 以完成"
+            "value": "重新启动 Qutran 以完成"
           }
         },
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "重新啟動 OpenClip 以完成"
+            "value": "重新啟動 Qutran 以完成"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Redémarrez OpenClip pour terminer"
+            "value": "Redémarrez Qutran pour terminer"
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "OpenClip を再起動して完了"
+            "value": "Qutran を再起動して完了"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Restart Qutran to finish"
           }
         }
       }
@@ -16554,25 +16686,31 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "恢复 OpenClip"
+            "value": "恢复 Qutran"
           }
         },
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "恢復 OpenClip"
+            "value": "恢復 Qutran"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Reprendre OpenClip"
+            "value": "Reprendre Qutran"
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "OpenClip を再開"
+            "value": "Qutran を再開"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Resume Qutran"
           }
         }
       }
@@ -16582,25 +16720,25 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "恢复 OpenClip (剩余 %lld 分钟)"
+            "value": "恢复 Qutran (剩余 %lld 分钟)"
           }
         },
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "恢復 OpenClip (剩餘 %lld 分鐘)"
+            "value": "恢復 Qutran (剩餘 %lld 分鐘)"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Reprendre OpenClip (%lld min restantes)"
+            "value": "Reprendre Qutran (%lld min restantes)"
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "OpenClip を再開 (残り %lld 分)"
+            "value": "Qutran を再開 (残り %lld 分)"
           }
         }
       }
@@ -18318,25 +18456,31 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "选中任意文本即可看到 OpenClip"
+            "value": "选中任意文本即可看到 Qutran"
           }
         },
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "選取任意文字即可看到 OpenClip"
+            "value": "選取任意文字即可看到 Qutran"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Sélectionnez du texte pour voir OpenClip"
+            "value": "Sélectionnez du texte pour voir Qutran"
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "テキストを選択するとOpenClipが表示されます"
+            "value": "テキストを選択するとQutranが表示されます"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Select any text to see Qutran"
           }
         }
       }
@@ -18626,25 +18770,31 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "随每个 AI 操作发送，位于操作自身的提示词之前。OpenClip 总会在其后附加操作的提示词、处理所选文本的方式以及回答格式。"
+            "value": "随每个 AI 操作发送，位于操作自身的提示词之前。Qutran 总会在其后附加操作的提示词、处理所选文本的方式以及回答格式。"
           }
         },
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "隨每個 AI 動作傳送，位於動作本身的提示詞之前。OpenClip 一律會在其後加上動作的提示詞、處理所選文字的方式以及回答格式。"
+            "value": "隨每個 AI 動作傳送，位於動作本身的提示詞之前。Qutran 一律會在其後加上動作的提示詞、處理所選文字的方式以及回答格式。"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Envoyée avec chaque action IA, avant l’invite propre à l’action. OpenClip ajoute toujours ensuite l’invite de l’action, la façon de traiter le texte sélectionné et le format de réponse."
+            "value": "Envoyée avec chaque action IA, avant l’invite propre à l’action. Qutran ajoute toujours ensuite l’invite de l’action, la façon de traiter le texte sélectionné et le format de réponse."
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "すべての AI アクションで、アクション自体のプロンプトより前に送信されます。OpenClip はその後に必ず、アクションのプロンプト、選択テキストの扱い方、回答の形式を追加します。"
+            "value": "すべての AI アクションで、アクション自体のプロンプトより前に送信されます。Qutran はその後に必ず、アクションのプロンプト、選択テキストの扱い方、回答の形式を追加します。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sent with every AI action, before the action's own prompt. Qutran always adds the action's prompt, how to treat the selected text, and the answer format after it."
           }
         }
       }
@@ -19718,25 +19868,31 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "这样 OpenClip 才能看到你选中的内容 — 文本默认保留在本地，仅在你调用云端 AI 或浏览器动作时才会发送。"
+            "value": "这样 Qutran 才能看到你选中的内容 — 文本默认保留在本地，仅在你调用云端 AI 或浏览器动作时才会发送。"
           }
         },
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "讓 OpenClip 可以讀取你選取的內容 — 文字預設保留在本機，只有在叫用雲端 AI 或瀏覽器動作時才會傳送。"
+            "value": "讓 Qutran 可以讀取你選取的內容 — 文字預設保留在本機，只有在叫用雲端 AI 或瀏覽器動作時才會傳送。"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Permet à OpenClip de voir ce que vous avez sélectionné — le texte reste local par défaut, sauf si vous utilisez des actions d’IA cloud ou de navigateur."
+            "value": "Permet à Qutran de voir ce que vous avez sélectionné — le texte reste local par défaut, sauf si vous utilisez des actions d’IA cloud ou de navigateur."
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "OpenClipが選択したテキストを検出できるようにします。クラウドAIやブラウザアクションを明示的に呼び出さない限り、テキストはデフォルトでローカルに保持されます。"
+            "value": "Qutranが選択したテキストを検出できるようにします。クラウドAIやブラウザアクションを明示的に呼び出さない限り、テキストはデフォルトでローカルに保持されます。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "So Qutran can see what you've selected — text stays local by default unless you invoke cloud AI or browser actions."
           }
         }
       }
@@ -20866,25 +21022,25 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "此扩展需要 OpenClip %@ 或更高版本。"
+            "value": "此扩展需要 Qutran %@ 或更高版本。"
           }
         },
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "此擴充功能需要 OpenClip %@ 或更新版本。"
+            "value": "此擴充功能需要 Qutran %@ 或更新版本。"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Cette extension nécessite OpenClip %@ ou version ultérieure."
+            "value": "Cette extension nécessite Qutran %@ ou version ultérieure."
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "この拡張機能には OpenClip %@ 以降が必要です。"
+            "value": "この拡張機能には Qutran %@ 以降が必要です。"
           }
         }
       }
@@ -23050,25 +23206,31 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "欢迎使用 OpenClip"
+            "value": "欢迎使用 Qutran"
           }
         },
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "歡迎使用 OpenClip"
+            "value": "歡迎使用 Qutran"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Bienvenue dans OpenClip"
+            "value": "Bienvenue dans Qutran"
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "OpenClipへようこそ"
+            "value": "Qutranへようこそ"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Welcome to Qutran"
           }
         }
       }

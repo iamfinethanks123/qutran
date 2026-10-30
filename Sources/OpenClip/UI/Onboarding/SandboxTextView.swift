@@ -41,7 +41,7 @@ struct SandboxTextView: NSViewRepresentable {
             }
 
             let cursor = selectionBounds.map { CGPoint(x: $0.midX, y: $0.maxY) } ?? NSEvent.mouseLocation
-            let appIdentity = AppIdentity(bundleIdentifier: Bundle.main.bundleIdentifier, localizedName: "OpenClip")
+            let appIdentity = AppIdentity(bundleIdentifier: Bundle.main.bundleIdentifier, localizedName: "Qutran")
             let context = SelectionContext(
                 text: selectedText,
                 sourceApp: appIdentity,
@@ -75,7 +75,7 @@ struct SandboxTextView: NSViewRepresentable {
         textView.textColor = .labelColor
         // Hint what to try: the sum is tinted, so selecting it shows the math action.
         if let hint = textView.string.range(of: "1250 + 340"), let storage = textView.textStorage {
-            storage.addAttribute(.backgroundColor, value: NSColor.controlAccentColor.withAlphaComponent(0.25),
+            storage.addAttribute(.backgroundColor, value: NSColor.qutranAccent.withAlphaComponent(0.25),
                                  range: NSRange(hint, in: textView.string))
         }
         textView.backgroundColor = .clear

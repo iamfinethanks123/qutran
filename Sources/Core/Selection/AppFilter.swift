@@ -19,6 +19,7 @@ public struct AppFilter: Sendable {
         "com.codeweavers.*",
         "com.collectorz.*",
         "com.openclip.*",      // Never trigger on ourselves
+        "com.qutran.*",        // Personal build's bundle prefix
         "com.oracle.SQLDeveloper",
         "com.parallels.*",
         "com.pilotmoon.popclip",

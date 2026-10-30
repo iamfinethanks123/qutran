@@ -138,7 +138,7 @@ struct ActionRowView: View {
                     .padding(.horizontal, 7)
                     .padding(.vertical, 4)
                     .background(RoundedRectangle(cornerRadius: 6).fill(Color.primary.opacity(0.05)))
-                    .overlay(RoundedRectangle(cornerRadius: 6).stroke(Color.accentColor.opacity(0.65), lineWidth: 1))
+                    .overlay(RoundedRectangle(cornerRadius: 6).stroke(Color.qutranAccent.opacity(0.65), lineWidth: 1))
                     .frame(maxWidth: 280, alignment: .leading)
                     .focused($nameFocused)
                     .onAppear {

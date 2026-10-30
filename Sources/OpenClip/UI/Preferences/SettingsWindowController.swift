@@ -101,8 +101,9 @@ public final class SettingsWindowController: NSWindowController, NSWindowDelegat
         window.titleVisibility = .hidden
         window.titlebarAppearsTransparent = true
         window.isMovableByWindowBackground = false
-        window.isOpaque = false
-        window.backgroundColor = .clear
+        // Qutran: solid cream window instead of see-through glass.
+        window.isOpaque = true
+        window.backgroundColor = .qutranCream
         window.minSize = window.frameRect(forContentRect: NSRect(origin: .zero, size: minimumContent)).size
         window.contentMinSize = minimumContent
         window.setFrameAutosaveName("OpenClipSettingsWindow")
@@ -118,13 +119,13 @@ public final class SettingsWindowController: NSWindowController, NSWindowDelegat
         window.toolbarStyle = .unified
         window.titlebarSeparatorStyle = .none
 
-        let controller = NSHostingController(rootView: PreferencesView())
+        let controller = NSHostingController(rootView: PreferencesView().tint(Color.qutranAccent))
         controller.sizingOptions = [.minSize]
         window.contentViewController = controller
         controller.view.wantsLayer = true
-        controller.view.layer?.backgroundColor = NSColor.clear.cgColor
-        window.isOpaque = false
-        window.backgroundColor = .clear
+        controller.view.layer?.backgroundColor = NSColor.qutranCream.cgColor
+        window.isOpaque = true
+        window.backgroundColor = .qutranCream
 
         super.init(window: window)
         window.delegate = self

@@ -35,7 +35,7 @@ targets:
               - openclip
               - openclip-dev
         CFBundleDocumentTypes:
-          - CFBundleTypeName: OpenClip Extension
+          - CFBundleTypeName: Qutran Extension
             CFBundleTypeRole: Viewer
             LSHandlerRank: Owner
             LSItemContentTypes:
@@ -43,7 +43,7 @@ targets:
             LSTypeIsPackage: true
         UTExportedTypeDeclarations:
           - UTTypeIdentifier: com.openclip.extension
-            UTTypeDescription: OpenClip Extension
+            UTTypeDescription: Qutran Extension
             UTTypeConformsTo:
               - com.apple.package
               - public.composite-content
@@ -51,8 +51,8 @@ targets:
               public.filename-extension:
                 - openclipext
         LSUIElement: true
-        NSHumanReadableCopyright: "Copyright © 2026 Ganesh M and OpenClip Contributors. AGPL-3.0 licensed."
-        NSAppleEventsUsageDescription: "OpenClip needs to control other apps to run your AppleScript actions and to paste results back into the app you were using."
+        NSHumanReadableCopyright: "Qutran — based on OpenClip, © 2026 Ganesh M and OpenClip Contributors. AGPL-3.0 licensed."
+        NSAppleEventsUsageDescription: "Qutran needs to control other apps to run your AppleScript actions and to paste results back into the app you were using."
         SUFeedURL: https://github.com/ganeshmshetty/openclip/releases/latest/download/appcast.xml
         SUPublicEDKey: JbyKx5LUkYkM+ovsJ1NPDR2W+1ptfdsu6b51KBsKhWo=
         SUScheduledCheckInterval: 86400
@@ -74,6 +74,7 @@ targets:
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         CODE_SIGN_ENTITLEMENTS: Sources/OpenClip/OpenClip.entitlements
         PRODUCT_MODULE_NAME: OpenClip
+        PRODUCT_NAME: Qutran
         # Ad-hoc is the default so a clone builds and runs with no Apple Developer account.
         # scripts/sign_artifact.sh overrides the identity for signed/notarized builds.
         CODE_SIGN_IDENTITY: "-"
@@ -86,11 +87,11 @@ targets:
         LOCALIZATION_PREFERS_STRING_CATALOGS: YES
       configs:
         Debug:
-          PRODUCT_BUNDLE_IDENTIFIER: com.openclip.OpenClip.dev
-          INFOPLIST_KEY_CFBundleDisplayName: OpenClip Dev
+          PRODUCT_BUNDLE_IDENTIFIER: com.qutran.Qutran
+          INFOPLIST_KEY_CFBundleDisplayName: Qutran
         Release:
-          PRODUCT_BUNDLE_IDENTIFIER: com.openclip.OpenClip
-          INFOPLIST_KEY_CFBundleDisplayName: OpenClip
+          PRODUCT_BUNDLE_IDENTIFIER: com.qutran.Qutran
+          INFOPLIST_KEY_CFBundleDisplayName: Qutran
     dependencies:
       - target: Core
       - package: OpenSelection
@@ -106,6 +107,9 @@ targets:
     settings:
       base:
         GENERATE_INFOPLIST_FILE: YES
+        # The app's product name is Qutran, so point the test host at it explicitly.
+        TEST_HOST: "$(BUILT_PRODUCTS_DIR)/Qutran.app/Contents/MacOS/Qutran"
+        BUNDLE_LOADER: "$(TEST_HOST)"
         SWIFT_VERSION: "6.0"
         SWIFT_STRICT_CONCURRENCY: complete
     dependencies:

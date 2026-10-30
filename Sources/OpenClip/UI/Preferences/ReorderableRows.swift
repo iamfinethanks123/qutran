@@ -121,7 +121,7 @@ struct ReorderableRows<Row: View>: View {
     private var insertionBar: some View {
         if let insertionGap, let y = RowReordering.insertionY(forGap: insertionGap, rowFrames: orderedFrames) {
             Rectangle()
-                .fill(Color.accentColor)
+                .fill(Color.qutranAccent)
                 .frame(height: 2)
                 .frame(maxWidth: .infinity)
                 .offset(y: y - 1)

@@ -24,7 +24,7 @@ struct SettingsNoticeBanner: View {
 
     private var symbolColor: Color {
         switch notice.style {
-        case .info: return .accentColor
+        case .info: return Color.qutranAccent
         case .error: return .orange
         case .destructiveConfirmation: return .red
         }

@@ -765,7 +765,7 @@ public struct PopupSearchView: View {
                 effectiveTheme: effectiveTheme,
                 colorScheme: colorScheme,
                 isHovered: hoveredFooterButton == id,
-                tint: isAccent ? .accentColor : nil
+                tint: isAccent ? Color.qutranAccent : nil
             )
             .contentShape(RoundedRectangle(cornerRadius: PopupMetrics.footerButtonCornerRadius, style: .continuous))
         }

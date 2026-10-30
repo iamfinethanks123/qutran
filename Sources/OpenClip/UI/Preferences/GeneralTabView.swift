@@ -251,7 +251,7 @@ struct GeneralTab: View {
                         SettingsDivider()
                         SettingsRow(
                             title: "Approval Required",
-                            info: "Enable OpenClip under System Settings > General > Login Items & Extensions.",
+                            info: "到「系統設定 › 一般 › 登入項目與延伸功能」啟用 Qutran。",
                             systemImage: "exclamationmark.triangle.fill",
                             plainIcon: true
                         ) {
@@ -426,10 +426,10 @@ private struct GeneralSearchHighlight: ViewModifier {
             .background {
                 if isHighlighted {
                     RoundedRectangle(cornerRadius: 9, style: .continuous)
-                        .fill(Color.accentColor.opacity(0.13))
+                        .fill(Color.qutranAccent.opacity(0.13))
                         .overlay {
                             RoundedRectangle(cornerRadius: 9, style: .continuous)
-                                .strokeBorder(Color.accentColor.opacity(0.32), lineWidth: 1)
+                                .strokeBorder(Color.qutranAccent.opacity(0.32), lineWidth: 1)
                         }
                 }
             }

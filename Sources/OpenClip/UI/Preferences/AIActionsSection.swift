@@ -33,7 +33,7 @@ public struct AIActionsSection: View {
                 router.push(.aiNewPreset)
             } content: {
                 Label("Add Custom AI Action", systemImage: "plus.circle")
-                    .foregroundStyle(Color.accentColor)
+                    .foregroundStyle(Color.qutranAccent)
             }
         } header: {
             HStack {
@@ -44,7 +44,7 @@ public struct AIActionsSection: View {
                 }
                 .font(.caption)
                 .buttonStyle(.plain)
-                .foregroundStyle(Color.accentColor)
+                .foregroundStyle(Color.qutranAccent)
             }
         } footer: {
             Text("Drag to reorder. To move a preset onto the main popup bar, drag it out of AI Tools in the Actions list.")

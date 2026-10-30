@@ -110,6 +110,29 @@ enum PersonalFeatures {
         }
     }
 
+    /// `QUTRAN_SNAPSHOT_DIR=<dir>` opens Settings and the hub, then writes a PNG of every visible window
+    /// into `dir` (rendered in-process, so no Screen Recording permission is needed). Design QA aid.
+    static func writeWindowSnapshots(environment: [String: String] = ProcessInfo.processInfo.environment) {
+        guard let path = environment["QUTRAN_SNAPSHOT_DIR"] else { return }
+        let directory = URL(fileURLWithPath: path)
+        let settingsPage = environment["QUTRAN_SNAPSHOT_SETTINGS"].flatMap(PreferenceTab.init(rawValue:))
+        Task { @MainActor in
+            try? await Task.sleep(for: .seconds(2))
+            SettingsWindowController.show(tab: settingsPage)
+            try? await Task.sleep(for: .seconds(2))
+            try? FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+            for (index, window) in NSApp.windows.enumerated() where window.isVisible {
+                guard let view = window.contentView?.superview ?? window.contentView,
+                      let rep = view.bitmapImageRepForCachingDisplay(in: view.bounds) else { continue }
+                view.cacheDisplay(in: view.bounds, to: rep)
+                let name = window.title.isEmpty ? "window-\(index)" : window.title
+                try? rep.representation(using: .png, properties: [:])?
+                    .write(to: directory.appendingPathComponent("\(name).png"))
+            }
+            Log.personal.info("Wrote window snapshots")
+        }
+    }
+
     /// Installs (and trusts) the extension packages bundled under `PersonalExtensions/` when they are
     /// missing or their bundled `version` changed. A user-edited copy with the same version is kept.
     static func installBundledExtensions(into directory: URL = Constants.extensionsDirectory) async {

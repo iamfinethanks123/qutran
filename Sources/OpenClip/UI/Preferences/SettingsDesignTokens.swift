@@ -19,7 +19,7 @@ public enum SettingsDesignTokens {
             if appearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua {
                 return NSColor(white: 0.0, alpha: 0.20)
             } else {
-                return NSColor(white: 1.0, alpha: 0.24)
+                return NSColor(srgbRed: 0.973, green: 0.957, blue: 0.925, alpha: 1.0) // Qutran: opaque cream, no wallpaper bleed
             }
         }))
     }
@@ -29,7 +29,7 @@ public enum SettingsDesignTokens {
             if appearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua {
                 return NSColor(red: 0.051, green: 0.051, blue: 0.059, alpha: 1.0) // #0D0D0F
             } else {
-                return NSColor(red: 0.93, green: 0.93, blue: 0.94, alpha: 1.0)
+                return NSColor(srgbRed: 0.973, green: 0.957, blue: 0.925, alpha: 1.0) // Qutran cream #F8F4EC
             }
         }))
     }
@@ -39,7 +39,7 @@ public enum SettingsDesignTokens {
             if appearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua {
                 return NSColor.white
             } else {
-                return NSColor.labelColor
+                return NSColor(srgbRed: 0.165, green: 0.141, blue: 0.122, alpha: 1.0) // ink #2A241F
             }
         }))
     }
@@ -49,7 +49,7 @@ public enum SettingsDesignTokens {
             if appearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua {
                 return NSColor(white: 1.0, alpha: 0.65)
             } else {
-                return NSColor.secondaryLabelColor
+                return NSColor(srgbRed: 0.165, green: 0.141, blue: 0.122, alpha: 0.62)
             }
         }))
     }
@@ -59,7 +59,7 @@ public enum SettingsDesignTokens {
             if appearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua {
                 return NSColor(white: 1.0, alpha: 0.38)
             } else {
-                return NSColor.tertiaryLabelColor
+                return NSColor(srgbRed: 0.165, green: 0.141, blue: 0.122, alpha: 0.38)
             }
         }))
     }
@@ -69,7 +69,7 @@ public enum SettingsDesignTokens {
             if appearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua {
                 return NSColor(srgbRed: 0.44, green: 0.74, blue: 1.0, alpha: 1.0)
             } else {
-                return NSColor(srgbRed: 0.12, green: 0.52, blue: 0.94, alpha: 1.0)
+                return NSColor(srgbRed: 0.604, green: 0.463, blue: 0.267, alpha: 1.0) // bronze #9A7644
             }
         }))
     }
@@ -90,7 +90,7 @@ public enum SettingsDesignTokens {
             if appearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua {
                 return NSColor(red: 0.086, green: 0.086, blue: 0.098, alpha: 0.42)
             } else {
-                return NSColor(white: 1.0, alpha: 0.52)
+                return NSColor(srgbRed: 1.0, green: 0.996, blue: 0.984, alpha: 0.96) // ivory card
             }
         }))
     }
@@ -100,7 +100,7 @@ public enum SettingsDesignTokens {
             if appearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua {
                 return NSColor(white: 1.0, alpha: 0.08)
             } else {
-                return NSColor(white: 0.0, alpha: 0.10)
+                return NSColor(srgbRed: 0.851, green: 0.820, blue: 0.765, alpha: 0.75)
             }
         }))
     }
@@ -111,7 +111,7 @@ public enum SettingsDesignTokens {
             if appearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua {
                 return NSColor(red: 0.125, green: 0.125, blue: 0.141, alpha: 0.50)
             } else {
-                return NSColor(white: 0.97, alpha: 0.62)
+                return NSColor(srgbRed: 1.0, green: 0.996, blue: 0.984, alpha: 1.0)
             }
         }))
     }
@@ -121,7 +121,7 @@ public enum SettingsDesignTokens {
             if appearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua {
                 return NSColor(white: 1.0, alpha: 0.06)
             } else {
-                return NSColor(white: 0.0, alpha: 0.08)
+                return NSColor(srgbRed: 0.851, green: 0.820, blue: 0.765, alpha: 0.7)
             }
         }))
     }
@@ -131,7 +131,7 @@ public enum SettingsDesignTokens {
             if appearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua {
                 return NSColor(white: 1.0, alpha: 0.08)
             } else {
-                return NSColor(white: 0.0, alpha: 0.06)
+                return NSColor(srgbRed: 1.0, green: 0.996, blue: 0.984, alpha: 0.9)
             }
         }))
     }
@@ -141,7 +141,7 @@ public enum SettingsDesignTokens {
             if appearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua {
                 return NSColor(white: 1.0, alpha: 0.06)
             } else {
-                return NSColor(white: 0.0, alpha: 0.08)
+                return NSColor(srgbRed: 0.851, green: 0.820, blue: 0.765, alpha: 0.7)
             }
         }))
     }
@@ -162,7 +162,7 @@ public enum SettingsDesignTokens {
             if appearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua {
                 return NSColor(white: 1.0, alpha: 0.11)
             } else {
-                return NSColor(white: 0.0, alpha: 0.08)
+                return NSColor(srgbRed: 0.604, green: 0.463, blue: 0.267, alpha: 0.13)
             }
         }))
     }
@@ -172,7 +172,7 @@ public enum SettingsDesignTokens {
             if appearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua {
                 return NSColor(white: 1.0, alpha: 0.05)
             } else {
-                return NSColor(white: 0.0, alpha: 0.04)
+                return NSColor(srgbRed: 0.604, green: 0.463, blue: 0.267, alpha: 0.06)
             }
         }))
     }
@@ -182,7 +182,7 @@ public enum SettingsDesignTokens {
             if appearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua {
                 return NSColor.white
             } else {
-                return NSColor.labelColor
+                return NSColor(srgbRed: 0.165, green: 0.141, blue: 0.122, alpha: 1.0)
             }
         }))
     }
@@ -192,7 +192,7 @@ public enum SettingsDesignTokens {
             if appearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua {
                 return NSColor(white: 1.0, alpha: 0.08)
             } else {
-                return NSColor(white: 0.0, alpha: 0.06)
+                return NSColor(srgbRed: 1.0, green: 0.996, blue: 0.984, alpha: 0.9)
             }
         }))
     }
@@ -202,7 +202,7 @@ public enum SettingsDesignTokens {
             if appearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua {
                 return NSColor(white: 1.0, alpha: 0.10)
             } else {
-                return NSColor(white: 0.0, alpha: 0.08)
+                return NSColor(srgbRed: 0.851, green: 0.820, blue: 0.765, alpha: 0.7)
             }
         }))
     }

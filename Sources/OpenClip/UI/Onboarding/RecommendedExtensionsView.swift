@@ -105,12 +105,12 @@ private struct RecommendedExtensionRow: View {
                 if let urlString = item.iconURL, let url = URL(string: urlString) {
                     RemoteTemplateIcon(url: url)
                         .frame(width: 18, height: 18)
-                        .foregroundColor(.accentColor)
+                        .foregroundColor(Color.qutranAccent)
                 } else {
                     Image(systemName: bareSymbolName)
                         .symbolRenderingMode(.hierarchical)
                         .font(.system(size: 16))
-                        .foregroundColor(.accentColor)
+                        .foregroundColor(Color.qutranAccent)
                 }
             }
             .frame(width: 28, height: 28)

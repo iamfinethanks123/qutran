@@ -43,7 +43,7 @@ struct ActionSoundPopoverView: View {
                 }
                 .buttonStyle(.plain)
                 .font(.system(size: 11.5, weight: .medium))
-                .foregroundStyle(Color.accentColor)
+                .foregroundStyle(Color.qutranAccent)
                 .disabled(rows.isEmpty)
             }
 

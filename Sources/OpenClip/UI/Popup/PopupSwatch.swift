@@ -142,7 +142,7 @@ struct PopupSwatch: View {
 
     private var mockContext: ActionContext {
         let context = SelectionContext(
-            text: "OpenClip",
+            text: "Qutran",
             sourceApp: AppIdentity(NSRunningApplication.current),
             cursorPosition: .zero,
             selectionBounds: nil,

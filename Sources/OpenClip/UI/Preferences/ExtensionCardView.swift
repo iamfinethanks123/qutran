@@ -107,7 +107,7 @@ struct ExtensionCardView: View {
                         .foregroundColor(.primary)
                 } else if let symbolName = bareSymbolName {
                     ActionIconView(icon: .symbol(symbolName), size: 18)
-                        .foregroundColor(.accentColor)
+                        .foregroundColor(Color.qutranAccent)
                 } else {
                     letterTile
                 }
@@ -126,7 +126,7 @@ struct ExtensionCardView: View {
                     if isFeatured {
                         Image(systemName: "rosette")
                             .font(.system(size: 11, weight: .semibold))
-                            .foregroundColor(.accentColor)
+                            .foregroundColor(Color.qutranAccent)
                             .help(String(localized: "Featured"))
                             .accessibilityLabel(String(localized: "Featured"))
                     }
@@ -334,9 +334,9 @@ private struct StoreActionButton: View {
                         .frame(width: 28, height: 28)
                     }
                     .buttonStyle(.plain)
-                    .background(Color.accentColor.opacity(0.85), in: Circle())
+                    .background(Color.qutranAccent.opacity(0.85), in: Circle())
                     .background(.ultraThinMaterial, in: Circle())
-                    .glassEffect(.regular.tint(Color.accentColor.opacity(0.35)).interactive(), in: Circle())
+                    .glassEffect(.regular.tint(Color.qutranAccent.opacity(0.35)).interactive(), in: Circle())
                     .contentShape(Circle())
                     .help(String(localized: "Install \(item.name)"))
                     .accessibilityLabel(String(localized: "Install \(item.name)"))
@@ -375,7 +375,7 @@ private struct StoreActionButton: View {
                 .frame(width: 28, height: 28)
                 .background(
                     Circle()
-                        .fill(isInstalled ? SettingsDesignTokens.glassButtonRed.opacity(0.12) : Color.accentColor)
+                        .fill(isInstalled ? SettingsDesignTokens.glassButtonRed.opacity(0.12) : Color.qutranAccent)
                 )
             }
             .buttonStyle(StoreActionButtonStyle())

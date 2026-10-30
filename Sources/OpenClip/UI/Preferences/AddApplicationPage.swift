@@ -29,7 +29,7 @@ public struct AddApplicationPage: View {
         for app in NSWorkspace.shared.runningApplications {
             guard app.activationPolicy == .regular,
                   let identifier = AppIdentity(app).ruleIdentifier,
-                  !identifier.hasPrefix("com.openclip."),
+                  !identifier.hasPrefix("com.openclip."), !identifier.hasPrefix("com.qutran."),
                   map[identifier] == nil else { continue }
             let name = app.localizedName ?? AppIdentity(app).processName ?? identifier
             map[identifier] = InstalledAppInfo(

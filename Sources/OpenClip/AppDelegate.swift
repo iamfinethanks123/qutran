@@ -41,6 +41,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCenterDele
         // The test host must never grow a Dock icon of its own.
         if NSClassFromString("XCTestCase") != nil { NSApp.setActivationPolicy(.accessory) }
         UNUserNotificationCenter.current().delegate = self
+        // Qutran is always the light cream look, whatever the system appearance.
+        NSApp.appearance = NSAppearance(named: .aqua)
 
         // Register logging sinks (Rotating File Appender and In-Memory Buffer)
         let rotatingSink = RotatingFileLogSink()
@@ -165,6 +167,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCenterDele
                 await PersonalFeatures.installBundledExtensions()
                 PersonalFeatures.handleLaunchEnvironment()
                 PersonalFeatures.showDemoPopup(using: popupController)
+                PersonalFeatures.writeWindowSnapshots()
                 ExtensionUpdateManager.shared.startAutomaticUpdates()
             }
         }

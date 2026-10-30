@@ -116,14 +116,15 @@ enum SettingsSidebarFilter {
 
 /// Stable palette and hash-based tints for extensions.
 enum SettingsTint {
-    static let general = Color(nsColor: .systemGray)
-    static let appearance = Color(red: 0.95, green: 0.35, blue: 0.60)
-    static let customize = Color(red: 0.65, green: 0.35, blue: 0.95)
-    static let shortcuts = Color(red: 0.68, green: 0.35, blue: 0.98)
-    static let appRules = Color(red: 0.98, green: 0.52, blue: 0.12)
-    static let ai = Color(red: 0.10, green: 0.72, blue: 0.84)
-    static let store = Color(red: 0.05, green: 0.52, blue: 0.98)
-    static let about = Color(red: 0.20, green: 0.78, blue: 0.42)
+    // Qutran: one muted, earthy family instead of bright system hues.
+    static let general = Color(red: 0.55, green: 0.50, blue: 0.44)     // taupe
+    static let appearance = Color(red: 0.76, green: 0.52, blue: 0.47)  // dusty rose
+    static let customize = Color(red: 0.58, green: 0.49, blue: 0.56)   // mauve
+    static let shortcuts = Color(red: 0.52, green: 0.48, blue: 0.58)   // heather
+    static let appRules = Color(red: 0.78, green: 0.53, blue: 0.33)    // terracotta
+    static let ai = Color(red: 0.45, green: 0.59, blue: 0.51)          // sage
+    static let store = Color(red: 0.60, green: 0.46, blue: 0.27)       // bronze
+    static let about = Color(red: 0.55, green: 0.57, blue: 0.40)       // olive
     static let neutral = Color(nsColor: NSColor(name: nil, dynamicProvider: { appearance in
         if appearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua {
             return NSColor(red: 0.22, green: 0.22, blue: 0.25, alpha: 1.0)
@@ -133,13 +134,13 @@ enum SettingsTint {
     }))
 
     static var openClip: Color {
-        Color.accentColor
+        Color.qutranAccent
     }
 
     static let reservedBlueHues: Range<Int> = 190..<270
 
     static func extensionTint(for packageID: String) -> Color {
-        Color(hue: Double(hue(for: packageID)) / 360.0, saturation: 0.74, brightness: 0.88)
+        Color(hue: Double(hue(for: packageID)) / 360.0, saturation: 0.32, brightness: 0.70)
     }
 
     static func hue(for packageID: String) -> Int {

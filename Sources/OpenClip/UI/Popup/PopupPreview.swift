@@ -27,7 +27,7 @@ struct PopupPreview: View {
     private var mockContext: ActionContext {
         let app = NSRunningApplication.current
         let context = SelectionContext(
-            text: "OpenClip Preview",
+            text: "Qutran Preview",
             sourceApp: AppIdentity(app),
             cursorPosition: .zero,
             selectionBounds: nil,
@@ -169,7 +169,7 @@ struct PopupPreview: View {
             .padding(.vertical, 3)
             .background(
                 RoundedRectangle(cornerRadius: 4.5, style: .continuous)
-                    .fill(Color.accentColor.opacity(0.45))
+                    .fill(Color.qutranAccent.opacity(0.45))
             )
 
             Text(" instantly.")

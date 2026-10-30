@@ -73,7 +73,7 @@ public struct Shortcut: View {
             }
             .frame(width: width, height: 24)
             .settingsGlassCapsule(
-                tint: isPopoverOpen ? Color.accentColor.opacity(0.18) : nil,
+                tint: isPopoverOpen ? Color.qutranAccent.opacity(0.18) : nil,
                 interactive: true
             )
             .contentShape(Capsule())
@@ -305,10 +305,10 @@ private struct KeyBox: View {
 
     private var backgroundColor: Color {
         if isPressed {
-            return Color.accentColor
+            return Color.qutranAccent
         }
         if isAccent {
-            return Color.accentColor.opacity(0.85)
+            return Color.qutranAccent.opacity(0.85)
         }
         return colorScheme == .dark ? Color.white.opacity(0.12) : Color.white.opacity(0.6)
     }
@@ -318,7 +318,7 @@ private struct KeyBox: View {
             return Color.white.opacity(0.6)
         }
         if isAccent {
-            return Color.accentColor
+            return Color.qutranAccent
         }
         return colorScheme == .dark ? Color.white.opacity(0.18) : Color.black.opacity(0.12)
     }

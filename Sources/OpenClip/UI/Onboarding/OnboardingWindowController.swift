@@ -39,7 +39,7 @@ public final class OnboardingWindowController: NSWindowController {
             onComplete()
         }
 
-        let hosting = NSHostingView(rootView: view)
+        let hosting = NSHostingView(rootView: view.tint(Color.qutranAccent))
         hosting.translatesAutoresizingMaskIntoConstraints = false
         hosting.wantsLayer = true
         hosting.layer?.backgroundColor = NSColor.clear.cgColor

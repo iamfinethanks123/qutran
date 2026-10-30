@@ -409,10 +409,10 @@ struct IconCellView: View {
     var body: some View {
         AnyIconView(iconId: iconId)
             .frame(width: 32, height: 32)
-            .background(isSelected ? Color.accentColor.opacity(0.35) : Color.primary.opacity(0.06))
+            .background(isSelected ? Color.qutranAccent.opacity(0.35) : Color.primary.opacity(0.06))
             .overlay(
                 RoundedRectangle(cornerRadius: 6)
-                    .stroke(isSelected ? Color.accentColor : Color.clear, lineWidth: 1.5)
+                    .stroke(isSelected ? Color.qutranAccent : Color.clear, lineWidth: 1.5)
             )
             .cornerRadius(6)
     }

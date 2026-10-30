@@ -38,7 +38,7 @@ public struct MacPrimaryButtonStyle: ButtonStyle {
             .padding(.vertical, 6.5)
             .background(
                 LinearGradient(
-                    colors: [Color.accentColor, Color.accentColor.opacity(0.88)],
+                    colors: [Color.qutranAccent, Color.qutranAccent.opacity(0.88)],
                     startPoint: .top,
                     endPoint: .bottom
                 )
@@ -49,7 +49,7 @@ public struct MacPrimaryButtonStyle: ButtonStyle {
                     .strokeBorder(Color.white.opacity(0.2), lineWidth: 0.5)
             )
             .shadow(
-                color: Color.accentColor.opacity(configuration.isPressed ? 0.05 : 0.2),
+                color: Color.qutranAccent.opacity(configuration.isPressed ? 0.05 : 0.2),
                 radius: configuration.isPressed ? 1.5 : 3,
                 x: 0,
                 y: configuration.isPressed ? 0.5 : 1.5
@@ -150,7 +150,7 @@ public struct OnboardingView: View {
                         .frame(height: 3)
 
                     Capsule()
-                        .fill(Color.accentColor)
+                        .fill(Color.qutranAccent)
                         .frame(
                             width: max(8, geo.size.width * CGFloat(step.rawValue + 1) / CGFloat(OnboardingStep.allCases.count)),
                             height: 3
@@ -245,7 +245,7 @@ public struct OnboardingView: View {
                 .resizable()
                 .scaledToFit()
                 .frame(width: 42, height: 42)
-                .foregroundStyle(Color.accentColor)
+                .foregroundStyle(Color.qutranAccent)
                 .padding(.bottom, 2)
 
             Text(title)
@@ -276,7 +276,7 @@ public struct OnboardingView: View {
                         HStack(spacing: 4) {
                             Image(systemName: "equal.circle.fill")
                                 .font(.system(size: 12, weight: .semibold))
-                                .foregroundColor(.accentColor)
+                                .foregroundColor(Color.qutranAccent)
                             Text("1,590")
                                 .font(.system(size: 12, weight: .bold))
                                 .foregroundColor(.primary)
@@ -285,7 +285,7 @@ public struct OnboardingView: View {
                         .padding(.vertical, 4.5)
                         .background(
                             RoundedRectangle(cornerRadius: 6, style: .continuous)
-                                .fill(Color.accentColor.opacity(0.14))
+                                .fill(Color.qutranAccent.opacity(0.14))
                         )
 
                         actionPill(icon: "doc.on.doc", label: "Copy")
@@ -317,7 +317,7 @@ public struct OnboardingView: View {
                             .padding(.vertical, 2)
                             .background(
                                 RoundedRectangle(cornerRadius: 4, style: .continuous)
-                                    .fill(Color.accentColor.opacity(0.25))
+                                    .fill(Color.qutranAccent.opacity(0.25))
                             )
                         Text(" USD for redesign")
                             .font(.system(size: 13.5))
@@ -412,11 +412,11 @@ public struct OnboardingView: View {
             Image(systemName: icon)
                 .symbolRenderingMode(.hierarchical)
                 .font(.system(size: 18))
-                .foregroundStyle(Color.accentColor)
+                .foregroundStyle(Color.qutranAccent)
                 .frame(width: 36, height: 36)
                 .background(
                     RoundedRectangle(cornerRadius: 9, style: .continuous)
-                        .fill(Color.accentColor.opacity(0.14))
+                        .fill(Color.qutranAccent.opacity(0.14))
                 )
 
             VStack(alignment: .leading, spacing: 2) {
@@ -447,7 +447,7 @@ public struct OnboardingView: View {
                         .foregroundColor(.primary)
                         .padding(.horizontal, 14)
                         .frame(height: 26)
-                        .settingsGlassCapsule(tint: isProminent ? Color.accentColor : nil)
+                        .settingsGlassCapsule(tint: isProminent ? Color.qutranAccent : nil)
                         .contentShape(Capsule())
                 }
                 .buttonStyle(.plain)
@@ -483,7 +483,7 @@ public struct OnboardingView: View {
 
             // One bordered box, large enough to select from comfortably.
             SandboxTextView(
-                text: "Our team sync is Friday at 2:30pm — project budget is 1250 + 340. Check https://getopenclip.app for details.",
+                text: "Our team sync is Friday at 2:30pm — project budget is 1250 + 340. Check https://www.apple.com for details.",
                 fontSize: 16,
                 onSelection: {
                     if !hasDetectedSelection {
@@ -500,7 +500,7 @@ public struct OnboardingView: View {
             )
             .overlay(
                 RoundedRectangle(cornerRadius: 12, style: .continuous)
-                    .strokeBorder(hasDetectedSelection ? Color.green.opacity(0.5) : Color.accentColor.opacity(0.35), lineWidth: 1.5)
+                    .strokeBorder(hasDetectedSelection ? Color.green.opacity(0.5) : Color.qutranAccent.opacity(0.35), lineWidth: 1.5)
             )
             .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
 

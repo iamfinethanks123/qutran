@@ -513,7 +513,7 @@ public struct AICustomActionBuilderCard: View {
                             .overlay(
                                 RoundedRectangle(cornerRadius: 8, style: .continuous)
                                     .stroke(
-                                        isPromptFocused ? Color.accentColor.opacity(0.7) : Color.primary.opacity(0.12),
+                                        isPromptFocused ? Color.qutranAccent.opacity(0.7) : Color.primary.opacity(0.12),
                                         lineWidth: 1
                                     )
                             )
@@ -565,7 +565,7 @@ public struct AICustomActionBuilderCard: View {
                 Label(String(localized: "Generate"), systemImage: "sparkle")
             }
             .buttonStyle(.borderedProminent)
-            .tint(Color.accentColor)
+            .tint(Color.qutranAccent)
             .buttonBorderShape(.capsule)
             .controlSize(.regular)
             .keyboardShortcut(.return, modifiers: .command)

@@ -51,7 +51,7 @@ public final class PermissionRecoveryWindowController: NSWindowController, NSWin
             }
         )
 
-        let hosting = NSHostingView(rootView: view)
+        let hosting = NSHostingView(rootView: view.tint(Color.qutranAccent))
         hosting.translatesAutoresizingMaskIntoConstraints = false
         window.contentView = hosting
     }

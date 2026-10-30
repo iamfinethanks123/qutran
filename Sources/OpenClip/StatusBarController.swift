@@ -196,14 +196,13 @@ class StatusBarController: NSObject, NSMenuDelegate, NSMenuItemValidation {
         menu.addItem(prefsItem)
         menu.addItem(NSMenuItem.separator())
 
+        // Qutran: no OpenClip update feed or issue tracker in the menu. The update item stays (hidden)
+        // so its state handling keeps working; Qutran's bundle ID never enables the updater.
         let updateItem = menuItem(title: String(localized: "Check for Updates…"), action: #selector(checkForUpdates))
+        updateItem.isHidden = true
         menu.addItem(updateItem)
         self.updateMenuItem = updateItem
         updateUpdateMenuItem(version: AppUpdateManager.shared.availableUpdateVersion)
-
-        menu.addItem(menuItem(title: String(localized: "Report Issue…"), action: #selector(openReportIssue)))
-
-        menu.addItem(NSMenuItem.separator())
         
         let quitItem = NSMenuItem(title: String(localized: "Quit"), action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q")
         quitItem.target = NSApp
@@ -587,7 +586,7 @@ class StatusBarController: NSObject, NSMenuDelegate, NSMenuItemValidation {
         let isPaused = settingsStore.get(.pauseUntilTimestamp) > Date().timeIntervalSince1970
         let effectiveEnabled = isEnabled && !isPaused
         if let button = statusItem?.button {
-            button.image = NSImage(named: "MenuBarIcon") ?? NSImage(systemSymbolName: "paperclip", accessibilityDescription: "OpenClip")
+            button.image = NSImage(named: "MenuBarIcon") ?? NSImage(systemSymbolName: "translate", accessibilityDescription: "Qutran")
             button.image?.isTemplate = true
             let hasReminder = AppUpdateManager.shared.hasUpdateReminder
             button.title = hasReminder ? "•" : ""

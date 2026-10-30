@@ -1,6 +1,10 @@
-# Personal build: offline-first additions
+# Qutran: offline-first build of OpenClip
 
-This `personal` branch adds offline features on top of OpenClip. Everything runs on-device.
+This `personal` branch ships as **Qutran** (`com.qutran.Qutran`, `~/Applications/Qutran.app`). It adds offline features on top of OpenClip, and everything runs on-device. The whole UI uses one cream-and-bronze look: Settings, onboarding, popup, hub, and the app and menu bar icons. Credit to OpenClip (AGPL-3.0) stays in About and in the copyright string.
+
+- Icons are rendered by `swift scripts/personal/render_icons.swift "$PWD"`, which draws a speech-bubble "Q" holding 譯.
+- Build outputs live in `build.noindex/` so Spotlight doesn't list stray copies of the app.
+- `QUTRAN_SNAPSHOT_DIR=<dir>` (optionally with `QUTRAN_SNAPSHOT_SETTINGS=General|About|…`) writes PNGs of the open windows for design review.
 
 ## What's added
 

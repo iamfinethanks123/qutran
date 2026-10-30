@@ -37,7 +37,7 @@ final class CoachMarkController {
             onDismiss: { [weak self] in self?.dismiss() })
 
         // Measure after a manual layout pass, as ToastPanelController does.
-        let hostingView = NSHostingView(rootView: card)
+        let hostingView = NSHostingView(rootView: card.tint(Color.qutranAccent))
         let container = NSView(frame: .zero)
         container.addSubview(hostingView)
         panel.contentView = container
@@ -123,7 +123,7 @@ private struct CoachMarkCard: View {
         HStack(spacing: 10) {
             Image(systemName: accessibilityGranted ? "hand.tap" : "gearshape.fill")
                 .font(.system(size: 15))
-                .foregroundStyle(Color.accentColor)
+                .foregroundStyle(Color.qutranAccent)
                 .accessibilityHidden(true)
 
             VStack(alignment: .leading, spacing: 1) {

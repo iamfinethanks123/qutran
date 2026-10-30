@@ -34,7 +34,7 @@ public struct PermissionRecoveryView: View {
                 Image(systemName: permissionManager.isAccessibilityGranted ? "checkmark.shield.fill" : (isUpdate ? "arrow.triangle.2.circlepath.circle.fill" : "hand.raised.square.fill"))
                     .symbolRenderingMode(.hierarchical)
                     .font(.system(size: 40))
-                    .foregroundStyle(permissionManager.isAccessibilityGranted ? Color.green : Color.accentColor)
+                    .foregroundStyle(permissionManager.isAccessibilityGranted ? Color.green : Color.qutranAccent)
 
                 Text(isUpdate ? String(localized: "OpenClip Has Been Updated") : String(localized: "Accessibility Access Required"))
                     .font(.title3.weight(.bold))

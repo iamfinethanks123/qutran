@@ -25,43 +25,6 @@ struct AboutTab: View {
                 // Identity block
                 identityBlock
 
-                // Software updates
-                SettingsCard("Software Updates") {
-                    SettingsToggleRow(
-                        title: "Automatically Download Updates",
-                        isOn: $updateManager.automaticallyDownloadsUpdates
-                    )
-                    .disabled(!updateManager.updatesEnabled)
-
-                    SettingsDivider()
-
-                    SettingsToggleRow(
-                        title: "Notify on Update",
-                        isOn: $updateManager.notifyOnUpdate
-                    )
-                    .disabled(!updateManager.updatesEnabled)
-
-                    SettingsDivider()
-
-                    SettingsRow(
-                        title: "Check for Updates",
-                        subtitle: updateStatusSubtitle
-                    ) {
-                        Button(updateActionTitle) {
-                            updateManager.checkForUpdates()
-                        }
-                        .buttonStyle(.plain)
-                        .font(.system(size: 11.5, weight: .medium))
-                        .foregroundStyle(SettingsDesignTokens.primaryText)
-                        .padding(.horizontal, 10)
-                        .frame(height: 24)
-                        .settingsGlassCapsule()
-                        .contentShape(Capsule())
-                        .disabled(!updateManager.canPresentUpdate)
-                        .accessibilityLabel(updateActionTitle)
-                    }
-                }
-
                 SettingsCard("Extension Updates") {
                     SettingsToggleRow(
                         title: "Automatically Update Extensions",
@@ -69,19 +32,9 @@ struct AboutTab: View {
                     )
                 }
 
-                // Links
-                SettingsCard("Links") {
-                    linkRow("Website", systemImage: "globe", url: "https://www.getopenclip.app")
-                    SettingsDivider()
-                    linkRow("Documentation", systemImage: "book", url: "https://www.getopenclip.app/docs")
-                    SettingsDivider()
-                    linkRow("Support", systemImage: "questionmark.circle", url: "https://www.getopenclip.app/support")
-                    SettingsDivider()
-                    linkRow("Discord", systemImage: "bubble.left.and.bubble.right", url: "https://discord.gg/acYYdzM7jR")
-                    SettingsDivider()
-                    linkRow("GitHub", systemImage: "chevron.left.forwardslash.chevron.right", url: "https://github.com/ganeshmshetty/openclip")
-                    SettingsDivider()
-                    linkRow("Report an Issue", systemImage: "ant", url: "https://github.com/ganeshmshetty/openclip/issues")
+                // Credits: Qutran is built on the open-source OpenClip project (AGPL-3.0).
+                SettingsCard("致謝") {
+                    linkRow("基於 OpenClip 開源項目", systemImage: "chevron.left.forwardslash.chevron.right", url: "https://github.com/ganeshmshetty/openclip")
                 }
 
                 // Diagnostics
@@ -117,7 +70,7 @@ struct AboutTab: View {
                     }
                 }
 
-                Text("Open source under AGPL-3.0 License")
+                Text("以 AGPL-3.0 授權條款開放原始碼 · 基於 OpenClip © Ganesh M and OpenClip Contributors")
                     .font(.footnote)
                     .foregroundStyle(.tertiary)
                     .frame(maxWidth: .infinity, alignment: .center)
@@ -138,34 +91,19 @@ struct AboutTab: View {
                 .resizable()
                 .frame(width: 72, height: 72)
 
-            Text("OpenClip")
-                .font(.title2.weight(.semibold))
+            Text("Qutran")
+                .font(.system(size: 24, weight: .semibold, design: .serif))
                 .foregroundStyle(SettingsDesignTokens.primaryText)
 
             Text("Version \(version)")
                 .font(.callout)
                 .foregroundStyle(.secondary)
 
-            Text("Instant actions for selected text on macOS")
+            Text("離線翻譯 · 揀字即用")
                 .font(.callout)
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
 
-            Button {
-                openURL("https://www.getopenclip.app/support")
-            } label: {
-                HStack(spacing: 4) {
-                    Image(systemName: "heart.fill")
-                        .font(.caption.weight(.semibold))
-                        .foregroundStyle(.red)
-                    Text(String(localized: "Donate"))
-                    Image(systemName: "arrow.up.right")
-                        .font(.caption2.weight(.semibold))
-                }
-            }
-            .buttonStyle(.link)
-            .font(.callout)
-            .padding(.top, 2)
         }
         .frame(maxWidth: .infinity)
         .padding(.top, 8)

@@ -8,7 +8,7 @@
 	<array>
 		<dict>
 			<key>CFBundleTypeName</key>
-			<string>OpenClip Extension</string>
+			<string>Qutran Extension</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
 			<key>LSHandlerRank</key>
@@ -58,9 +58,9 @@
 	<key>LSUIElement</key>
 	<true/>
 	<key>NSAppleEventsUsageDescription</key>
-	<string>OpenClip needs to control other apps to run your AppleScript actions and to paste results back into the app you were using.</string>
+	<string>Qutran needs to control other apps to run your AppleScript actions and to paste results back into the app you were using.</string>
 	<key>NSHumanReadableCopyright</key>
-	<string>Copyright © 2026 Ganesh M and OpenClip Contributors. AGPL-3.0 licensed.</string>
+	<string>Qutran — based on OpenClip, © 2026 Ganesh M and OpenClip Contributors. AGPL-3.0 licensed.</string>
 	<key>SUAutomaticallyUpdate</key>
 	<false/>
 	<key>SUEnableAutomaticChecks</key>
@@ -80,7 +80,7 @@
 				<string>public.composite-content</string>
 			</array>
 			<key>UTTypeDescription</key>
-			<string>OpenClip Extension</string>
+			<string>Qutran Extension</string>
 			<key>UTTypeIdentifier</key>
 			<string>com.openclip.extension</string>
 			<key>UTTypeTagSpecification</key>

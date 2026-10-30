@@ -268,7 +268,7 @@ final class OutlineTableRowView: NSTableRowView {
     override func drawDraggingDestinationFeedback(in dirtyRect: NSRect) {
         let rect = bounds.insetBy(dx: 4, dy: 0)
         let path = NSBezierPath(roundedRect: rect, xRadius: Self.cornerRadius, yRadius: Self.cornerRadius)
-        NSColor.controlAccentColor.withAlphaComponent(0.16).setFill()
+        NSColor.qutranAccent.withAlphaComponent(0.16).setFill()
         path.fill()
     }
 
@@ -284,7 +284,7 @@ private final class GroupDropHighlight: NSView {
 
     override func draw(_ dirtyRect: NSRect) {
         let shape = NSBezierPath(roundedRect: bounds.insetBy(dx: 1, dy: 1), xRadius: 10, yRadius: 10)
-        NSColor.controlAccentColor.withAlphaComponent(0.12).setFill()
+        NSColor.qutranAccent.withAlphaComponent(0.12).setFill()
         shape.fill()
     }
 }

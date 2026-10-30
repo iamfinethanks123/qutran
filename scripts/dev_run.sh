@@ -2,7 +2,7 @@
 # Fast local development build, install to ~/Applications, and run.
 #
 # Builds OpenClip in Debug mode with bundle ID com.openclip.OpenClip.dev
-# and installs to ~/Applications/OpenClip Dev.app so macOS TCC Accessibility
+# and installs to ~/Applications/Qutran.app so macOS TCC Accessibility
 # permissions stay permanently granted and never collide with /Applications/OpenClip.app.
 # Use --verbose to show the full xcodebuild output.
 
@@ -149,8 +149,8 @@ elif [ -n "${OPENCLIP_DEV_SIGN_IDENTITY:-}" ]; then
   SIGNING_ARGS+=("CODE_SIGN_IDENTITY=$OPENCLIP_DEV_SIGN_IDENTITY" "CODE_SIGN_STYLE=Manual")
 fi
 
-DERIVED_DATA="$PROJECT_DIR/build/DerivedData"
-BUILT_APP="$DERIVED_DATA/Build/Products/Debug/OpenClip.app"
+DERIVED_DATA="$PROJECT_DIR/build.noindex/DerivedData"
+BUILT_APP="$DERIVED_DATA/Build/Products/Debug/Qutran.app"
 
 BUILD_CMD=(
   xcodebuild
@@ -264,7 +264,7 @@ APP_TO_RUN="$BUILT_APP"
 
 if [ "$NO_INSTALL" = false ]; then
   INSTALL_DIR="$HOME/Applications"
-  TARGET_APP="$INSTALL_DIR/OpenClip Dev.app"
+  TARGET_APP="$INSTALL_DIR/Qutran.app"
   INSTALL_RESULT='Failed'
   mkdir -p "$INSTALL_DIR"
   stage_line '>' "$C_ACCENT" 'Install' 'Installing app'
@@ -273,7 +273,7 @@ if [ "$NO_INSTALL" = false ]; then
     status_line '!' "$C_WARN" 'Ad-hoc build replacing a signed Dev app: macOS will ask for permissions again (see docs/developer-guide/signing-and-notarization.md)'
   fi
   # Terminate old dev instance before updating the binary.
-  pkill -f "OpenClip Dev" 2>/dev/null || true
+  pkill -f "Qutran.app/Contents/MacOS/Qutran" 2>/dev/null || true
   sleep 0.2
   rm -rf "$TARGET_APP"
   ditto "$BUILT_APP" "$TARGET_APP"
@@ -288,8 +288,8 @@ fi
 
 stage_line '>' "$C_ACCENT" 'Launch' 'Launching'
 LAUNCH_RESULT='Failed'
-/usr/bin/open -n --stdout /tmp/openclip.log --stderr /tmp/openclip.log "$APP_TO_RUN"
+/usr/bin/open -n --stdout /tmp/qutran.log --stderr /tmp/qutran.log "$APP_TO_RUN"
 LAUNCH_RESULT='Running'
 
-printf '\n%sLog%s  /tmp/openclip.log\n' "$C_ACCENT" "$C_RESET"
+printf '\n%sLog%s  /tmp/qutran.log\n' "$C_ACCENT" "$C_RESET"
 printf 'Accessibility: System Settings > Privacy & Security > Accessibility (if prompted).\n'
