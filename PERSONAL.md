@@ -27,7 +27,7 @@ Each action appears only when it fits the selection. For example, **撥打** sho
 ## Build and run
 
 ```bash
-./scripts/dev_run.sh            # installs ~/Applications/OpenClip Dev.app and launches it
+./scripts/dev_run.sh            # installs ~/Applications/Qutran.app and launches it
 ./scripts/test.sh               # full Swift suite
 node --test Tests/PersonalExtensionsJS/tools.test.js   # text-tool logic
 ```

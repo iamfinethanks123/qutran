@@ -1,5 +1,10 @@
 # NOTICE
 
+Qutran is a modified version of [OpenClip](https://github.com/ganeshmshetty/openclip).
+Qutran-specific modifications were introduced in October 2026 and are recorded
+in this repository's Git history. The original copyright and license notices
+below are retained.
+
 OpenClip
 Copyright (c) 2026 Ganesh M and OpenClip Contributors
 
