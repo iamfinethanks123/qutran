@@ -19,9 +19,9 @@ Qutran 基於 [OpenClip](https://github.com/ganeshmshetty/openclip) 開發，以
 
 離線翻譯和繁簡轉換可在裝置上執行。下載語言包、網頁搜尋及選用的雲端 AI 服務需要網絡連線；雲端功能會把相關內容傳送至你設定的服務。
 
-## 下載安裝（未公證測試版）
+## 下載安裝
 
-**[下載 Qutran v0.1.0 安裝包（DMG）](https://github.com/iamfinethanks123/qutran/releases/download/v0.1.0/Qutran-v0.1.0-universal.dmg)** · [版本說明與其他下載](https://github.com/iamfinethanks123/qutran/releases/tag/v0.1.0)
+**[下載 Qutran v0.1.1 安裝包（DMG）](https://github.com/iamfinethanks123/qutran/releases/download/v0.1.1/Qutran-v0.1.1-universal.dmg)** · [版本說明與其他下載](https://github.com/iamfinethanks123/qutran/releases/tag/v0.1.1)
 
 需要 macOS 26 或以上。安裝包為 Universal 版本，包含 Apple silicon（arm64）及 Intel（x86_64）。
 
@@ -29,7 +29,9 @@ Qutran 基於 [OpenClip](https://github.com/ganeshmshetty/openclip) 開發，以
 2. 從「應用程式」開啟 Qutran；它會顯示在選單列。
 3. 在「系統設定 → 私隱與保安 → 輔助使用」授予權限，並在 Qutran 的語言頁面下載所需翻譯語言包。
 
-**此測試版使用 ad-hoc 簽署，尚未取得 Developer ID 簽署或 Apple 公證。** 若 macOS 攔截首次開啟，請在確認下載來源後，前往「系統設定 → 私隱與保安」，按「仍要開啟／Open Anyway」並依系統提示確認。詳細步驟見 [Apple 官方指引](https://support.apple.com/en-au/102445)。
+**v0.1.1 已使用 Developer ID 簽署並通過 Apple 公證，App 及 DMG 均附有公證票證。** 在 macOS 預設安全設定下可正常開啟，毋須到設定按「仍要開啟／Open Anyway」。首次開啟仍可能出現一般的網上下載確認；輔助使用權限亦需自行授予。詳細說明見 [Apple 官方指引](https://support.apple.com/en-hk/102445)。
+
+舊版 v0.1.0 未公證測試版及其校驗碼保留於 Releases。
 
 ## 從原始碼建置
 
@@ -73,7 +75,9 @@ Qutran 沿用 `~/.openclip/` 儲存本機資料；生字簿位於 `~/.openclip/p
 
 執行 `./scripts/package_app.sh` 可產生 `build/Qutran.dmg` 及 `build/Qutran.zip`。預設為 ad-hoc 簽署；正式簽署與公證的設定見[簽署文件](docs/developer-guide/signing-and-notarization.md)。
 
-GitHub Actions 目前停用；其餘上游發布流程仍保留 OpenClip 的設定。本次 Qutran 測試版透過本機封裝後上傳至 Releases。
+本機備好 Developer ID 憑證及 `qutran-notary` 鑰匙圈登入後，可執行 `OPENCLIP_SIGN_IDENTITY=auto OPENCLIP_NOTARIZE=1 NOTARY_PROFILE=qutran-notary ./scripts/package_app.sh`，完成簽署、公證、票證附加及 Gatekeeper 檢查。
+
+GitHub Actions 目前停用；其餘上游發布流程仍保留 OpenClip 的設定。Qutran 發布版本透過本機封裝、簽署及公證後上傳至 Releases；簽署金鑰與公證登入資料不包含在儲存庫內。
 
 ## 授權與致謝
 
