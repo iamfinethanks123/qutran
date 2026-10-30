@@ -81,25 +81,38 @@ struct TranslateAction: ConfigurableAction {
         guard PersonalTextRules.isTranslatable(text) else { return false }
         // "Translate to X" is pointless when the text is already X.
         if let fixedTarget, LanguageDetector.detect(text) == fixedTarget { return false }
+        // Visible means likely to be clicked: start translating now so the click feels instant.
+        // Favourite targets are speculated only for short text, behind the automatic one.
+        if fixedTarget == nil || text.count <= Self.maxFavoritePrefetchLength {
+            TranslationPrefetcher.shared.prefetch(text, target: fixedTarget)
+        }
         return true
     }
+
+    static let maxFavoritePrefetchLength = 300
 
     @MainActor
     func perform(_ context: ActionContext) async throws -> ActionResult {
         do {
-            let outcome = try await OfflineTranslator.shared.translate(context.selection.text, target: fixedTarget)
-            PersonalHistoryStore.shared.record(
-                kind: .translation,
-                original: context.selection.text,
-                result: outcome.text,
-                source: outcome.source,
-                target: outcome.target,
-                app: context.selection.sourceApp.localizedName
-            )
-            return .text(outcome.text)
+            return .text(try await Self.translateAndRecord(context, target: fixedTarget).text)
         } catch let error as OfflineTranslatorError {
             return .toast(Self.feedback(for: error))
         }
+    }
+
+    /// Translates the selection (reusing any prefetched result) and logs it in the vocabulary book.
+    @MainActor
+    static func translateAndRecord(_ context: ActionContext, target: String?) async throws -> TranslationOutcome {
+        let outcome = try await TranslationPrefetcher.shared.outcome(for: context.selection.text, target: target)
+        PersonalHistoryStore.shared.record(
+            kind: .translation,
+            original: context.selection.text,
+            result: outcome.text,
+            source: outcome.source,
+            target: outcome.target,
+            app: context.selection.sourceApp.localizedName
+        )
+        return outcome
     }
 
     static func feedback(for error: OfflineTranslatorError) -> StatusFeedback {
@@ -121,6 +134,37 @@ struct TranslateAction: ConfigurableAction {
             keywords: ["translate to", "翻譯為"],
             isVisible: { text in PersonalTextRules.isTranslatable(text) }
         )
+    }
+}
+
+/// Translates into the automatic target and pastes over the selection. Shown only where the
+/// selection can be replaced (editable field, Paste available).
+struct TranslateReplaceAction: ConfigurableAction, PasteRequiringAction {
+    let id = "personal.translateReplace"
+    var title: String { "譯後替換" }
+    let icon = ActionIcon.symbol("character.cursor.ibeam")
+    var keywords: [String] { ["translate replace", "replace", "替換", "翻譯替換"] }
+
+    var chrome: ActionChrome {
+        ActionChrome(requiresLiveSelection: true, showsLoading: true, loadingMessage: "翻譯中…",
+                     outputKind: .text, recommendedResult: .paste)
+    }
+
+    @MainActor
+    func isEnabled(for context: ActionContext) -> Bool {
+        let text = context.selection.text
+        guard context.selection.isEditable != false, PersonalTextRules.isTranslatable(text) else { return false }
+        TranslationPrefetcher.shared.prefetch(text, target: nil)
+        return true
+    }
+
+    @MainActor
+    func perform(_ context: ActionContext) async throws -> ActionResult {
+        do {
+            return .paste(try await TranslateAction.translateAndRecord(context, target: nil).text)
+        } catch let error as OfflineTranslatorError {
+            return .toast(TranslateAction.feedback(for: error))
+        }
     }
 }
 

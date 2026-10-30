@@ -135,6 +135,51 @@ final class PersonalTranslationTests: XCTestCase {
         XCTAssertEqual(OfflineTranslator.tidyPunctuation("Hello , world .", target: "en"), "Hello , world .")
     }
 
+    // MARK: - Prefetch and replace
+
+    @MainActor
+    func testPrefetchedOutcomeIsReused() async throws {
+        let prefetcher = TranslationPrefetcher()
+        prefetcher.prefetch("简体中文", target: "zh-Hant")
+        let first = try await prefetcher.outcome(for: "简体中文", target: "zh-Hant")
+        let second = try await prefetcher.outcome(for: "简体中文", target: "zh-Hant")
+        XCTAssertEqual(first.text, "簡體中文")
+        XCTAssertEqual(first, second)
+    }
+
+    @MainActor
+    func testPrefetchSkipsLongText() async throws {
+        let prefetcher = TranslationPrefetcher()
+        let long = String(repeating: "简", count: TranslationPrefetcher.maxPrefetchLength + 1)
+        prefetcher.prefetch(long, target: "zh-Hant")
+        // Still answers on demand.
+        let outcome = try await prefetcher.outcome(for: long, target: "zh-Hant")
+        XCTAssertEqual(outcome.text.count, long.count)
+    }
+
+    @MainActor
+    func testTranslateReplaceOnlyForReplaceableSelections() {
+        let action = TranslateReplaceAction()
+        let readOnly = ActionContext(selection: SelectionContext(text: "Hello there", isEditable: false))
+        let editable = ActionContext(selection: SelectionContext(text: "Hello there", isEditable: true))
+        XCTAssertFalse(action.isEnabled(for: readOnly))
+        XCTAssertTrue(action.isEnabled(for: editable))
+        XCTAssertTrue(action is any PasteRequiringAction)
+        XCTAssertEqual(action.chrome.requiresLiveSelection, true)
+    }
+
+    @MainActor
+    func testLaterAdditionsSlotInAfterTheirNeighbour() {
+        let order = ["builtin.copy", TranslateAction.automaticID, "builtin.search"]
+        XCTAssertEqual(
+            PersonalFeatures.insertingLaterAdditions(into: order),
+            ["builtin.copy", TranslateAction.automaticID, "personal.translateReplace", "builtin.search"]
+        )
+        let already = PersonalFeatures.insertingLaterAdditions(into: order)
+        XCTAssertEqual(PersonalFeatures.insertingLaterAdditions(into: already), already)
+        XCTAssertEqual(PersonalFeatures.insertingLaterAdditions(into: []), [])
+    }
+
     // MARK: - History
 
     @MainActor

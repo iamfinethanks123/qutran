@@ -45,6 +45,52 @@ enum LanguagePairStatus: Sendable, Equatable {
     case unsupported
 }
 
+/// Speculative translation: the popup asks for translations as soon as it shows, so the result is
+/// usually ready by the time the user clicks (on-device inference takes ~0.6 s per request).
+/// Requests run one after another, the automatic target first; a new selection drops the old ones.
+@MainActor
+final class TranslationPrefetcher {
+    static let shared = TranslationPrefetcher()
+    /// Longer selections are translated on demand only.
+    static let maxPrefetchLength = 1_500
+
+    private var text: String?
+    private var tasks: [String: Task<TranslationOutcome, Error>] = [:]
+    private var tail: Task<Void, Never>?
+
+    /// Starts translating `text` into `target` (nil = automatic) unless already queued.
+    func prefetch(_ text: String, target: String?) {
+        guard text.count <= Self.maxPrefetchLength else { return }
+        _ = task(for: text, target: target, queued: true)
+    }
+
+    /// The (possibly already finished) translation. One that was never prefetched starts now,
+    /// ahead of any queued speculation.
+    func outcome(for text: String, target: String?) async throws -> TranslationOutcome {
+        try await task(for: text, target: target, queued: false).value
+    }
+
+    private func task(for text: String, target: String?, queued: Bool) -> Task<TranslationOutcome, Error> {
+        if self.text != text {
+            tasks.values.forEach { $0.cancel() }
+            tasks.removeAll()
+            tail = nil
+            self.text = text
+        }
+        let key = target ?? "auto"
+        if let existing = tasks[key] { return existing }
+        let previous = queued ? tail : nil
+        let task = Task { @MainActor () throws -> TranslationOutcome in
+            await previous?.value
+            try Task.checkCancellation()
+            return try await OfflineTranslator.shared.translate(text, target: target)
+        }
+        tasks[key] = task
+        if queued { tail = Task { _ = try? await task.value } }
+        return task
+    }
+}
+
 @MainActor
 final class OfflineTranslator {
     static let shared = OfflineTranslator()

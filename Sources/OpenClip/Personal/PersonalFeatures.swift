@@ -15,17 +15,31 @@ enum PersonalFeatures {
     /// Bar order seeded once for a fresh install: the everyday actions first. Each action still only
     /// shows when it fits the selection, so the bar stays short. Users can reorder in Settings › Customize.
     static let defaultActionOrder = [
-        "builtin.copy", TranslateAction.automaticID, TranslateAction.groupID, DefineAction.actionID,
+        "builtin.copy", TranslateAction.automaticID, "personal.translateReplace", TranslateAction.groupID, DefineAction.actionID,
         "builtin.calculate", ChineseConvertAction.groupID, "builtin.calendar", "builtin.openurl",
         "personal.maps", "personal.call", "builtin.search", "personal.search.sites", "personal.speak",
         "personal.texttools.text", "personal.texttools.encode", "builtin.cut", "builtin.paste", "builtin.aiTools",
     ]
 
     static func seedActionOrderIfNeeded(settingsStore: any SettingsStore) {
-        guard !settingsStore.get(.personalDidSeedActionOrder) else { return }
-        settingsStore.set(.personalDidSeedActionOrder, value: true)
-        guard settingsStore.get(.actionOrder).isEmpty else { return }
-        settingsStore.set(.actionOrder, value: defaultActionOrder)
+        if !settingsStore.get(.personalDidSeedActionOrder) {
+            settingsStore.set(.personalDidSeedActionOrder, value: true)
+            if settingsStore.get(.actionOrder).isEmpty {
+                settingsStore.set(.actionOrder, value: defaultActionOrder)
+            }
+        }
+        settingsStore.set(.actionOrder, value: insertingLaterAdditions(into: settingsStore.get(.actionOrder)))
+    }
+
+    /// Actions added after an order was saved go right after their neighbour, not to the end of the bar.
+    static func insertingLaterAdditions(into order: [String]) -> [String] {
+        var order = order
+        let additions = [(id: TranslateReplaceAction().id, after: TranslateAction.automaticID)]
+        for addition in additions where !order.contains(addition.id) {
+            guard let index = order.firstIndex(of: addition.after) else { continue }
+            order.insert(addition.id, at: index + 1)
+        }
+        return order
     }
 
     /// Extra on-device AI prompts added once alongside OpenClip's own (Proofread, Rewrite, Formal Tone…).
@@ -65,6 +79,7 @@ enum PersonalFeatures {
         }
         let coordinator = ActionCoordinator.shared
         coordinator.register(action: TranslateAction())
+        coordinator.register(action: TranslateReplaceAction())
         coordinator.register(action: TranslateAction.group())
         registerFavoriteTargets(settingsStore: settingsStore)
 
