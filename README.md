@@ -14,7 +14,7 @@ Qutran is a macOS menu bar app that turns selected text into translation and tex
 
 ### Features
 
-- **Translate selected text** with automatic language detection, favorite target languages, and translation replacement in supported editable fields.
+- **Translate selected text** with automatic language detection, an automatic or locked target language, favorite target languages, and translation replacement in supported editable fields.
 - **Translate offline** with Apple's Translation framework after downloading the required language packs.
 - **Convert Simplified and Traditional Chinese** using the system ICU libraries.
 - **Quick translation and vocabulary**: open the translation window with `⌥⌘T`; search, star, and export vocabulary entries as CSV.
@@ -23,7 +23,7 @@ Qutran is a macOS menu bar app that turns selected text into translation and tex
 
 ### Download and install
 
-**[Download Qutran v0.1.1 for macOS (DMG)](https://github.com/iamfinethanks123/qutran/releases/download/v0.1.1/Qutran-v0.1.1-universal.dmg)** · [ZIP and release notes](https://github.com/iamfinethanks123/qutran/releases/tag/v0.1.1)
+**[Download Qutran v0.1.2 for macOS (DMG)](https://github.com/iamfinethanks123/qutran/releases/download/v0.1.2/Qutran-v0.1.2-universal.dmg)** · [ZIP and release notes](https://github.com/iamfinethanks123/qutran/releases/tag/v0.1.2)
 
 Requires **macOS 26.0 or later**. The Universal download includes both Apple silicon (`arm64`) and Intel (`x86_64`).
 
@@ -32,7 +32,7 @@ Requires **macOS 26.0 or later**. The Universal download includes both Apple sil
 3. Grant **Accessibility** permission in **System Settings → Privacy & Security → Accessibility** to enable selected text actions.
 4. Download the required translation language packs from Qutran's language page before using offline translation.
 
-The v0.1.1 app and DMG are **Developer ID signed and notarized by Apple**, with notarization tickets attached. Under the default macOS security settings, an **Open Anyway** override is not required. macOS may still show its normal first-open confirmation and request Accessibility permission.
+The v0.1.2 app and DMG are **Developer ID signed and notarized by Apple**, with notarization tickets attached. Under the default macOS security settings, an **Open Anyway** override is not required. macOS may still show its normal first-open confirmation and request Accessibility permission.
 
 ### Privacy and local data
 
@@ -66,7 +66,7 @@ Qutran 基於 [OpenClip](https://github.com/ganeshmshetty/openclip) 開發，以
 
 ### 主要功能
 
-- **選字翻譯**：自動辨識原文語言，翻譯至主要語言，或從常用語言選單指定目標。支援翻譯後取代原文。
+- **選字翻譯**：自動辨識原文語言，可自動選擇或鎖定翻譯目標，亦可從常用語言選單指定目標。支援翻譯後取代原文。
 - **離線翻譯**：透過 Apple Translation framework 在裝置上處理；使用前須下載對應語言包。
 - **繁簡轉換**：透過系統 ICU 轉換簡體及繁體中文。
 - **快速翻譯與生字簿**：以 `⌥⌘T` 開啟翻譯視窗；生字簿支援搜尋、收藏及 CSV 匯出。
@@ -78,7 +78,7 @@ Qutran 基於 [OpenClip](https://github.com/ganeshmshetty/openclip) 開發，以
 
 ### 下載安裝
 
-**[下載 Qutran v0.1.1 安裝包（DMG）](https://github.com/iamfinethanks123/qutran/releases/download/v0.1.1/Qutran-v0.1.1-universal.dmg)** · [版本說明與其他下載](https://github.com/iamfinethanks123/qutran/releases/tag/v0.1.1)
+**[下載 Qutran v0.1.2 安裝包（DMG）](https://github.com/iamfinethanks123/qutran/releases/download/v0.1.2/Qutran-v0.1.2-universal.dmg)** · [版本說明與其他下載](https://github.com/iamfinethanks123/qutran/releases/tag/v0.1.2)
 
 需要 macOS 26 或以上。安裝包為 Universal 版本，包含 Apple silicon（arm64）及 Intel（x86_64）。
 
@@ -86,7 +86,7 @@ Qutran 基於 [OpenClip](https://github.com/ganeshmshetty/openclip) 開發，以
 2. 從「應用程式」開啟 Qutran；它會顯示在選單列。
 3. 在「系統設定 → 私隱與保安 → 輔助使用」授予權限，並在 Qutran 的語言頁面下載所需翻譯語言包。
 
-**v0.1.1 已使用 Developer ID 簽署並通過 Apple 公證，App 及 DMG 均附有公證票證。** 在 macOS 預設安全設定下可正常開啟，毋須到設定按「仍要開啟／Open Anyway」。首次開啟仍可能出現一般的網上下載確認；輔助使用權限亦需自行授予。詳細說明見 [Apple 官方指引](https://support.apple.com/en-hk/102445)。
+**v0.1.2 已使用 Developer ID 簽署並通過 Apple 公證，App 及 DMG 均附有公證票證。** 在 macOS 預設安全設定下可正常開啟，毋須到設定按「仍要開啟／Open Anyway」。首次開啟仍可能出現一般的網上下載確認；輔助使用權限亦需自行授予。詳細說明見 [Apple 官方指引](https://support.apple.com/en-hk/102445)。
 
 舊版 v0.1.0 未公證測試版及其校驗碼保留於 Releases。
 
