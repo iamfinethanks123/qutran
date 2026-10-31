@@ -86,6 +86,7 @@ internal final class MacSelectionMonitor: SelectionMonitoring {
     internal var gestureScreens: @MainActor () -> SelectionGestureLocality.ScreenLayout = { .current }
     internal var isPressOnWindowChrome: @MainActor (CGPoint, pid_t) async -> Bool = { point, pid in
         guard NSClassFromString("XCTestCase") == nil else { return false }
+        guard !MacSelectionMonitor.touchesOwnUI(cocoaPoint: point, pid: pid) else { return false }
         let screenTop = NSScreen.screens.first(where: { $0.frame.origin == .zero })?.frame.maxY
             ?? NSScreen.screens.first?.frame.maxY ?? 0
         return await SelectionGestureTargetProbe.default.isWindowChrome(
@@ -147,8 +148,19 @@ internal final class MacSelectionMonitor: SelectionMonitoring {
 
     /// Capture screen geometry on the main actor, then run the deadline-bounded AX lookup
     /// off the UI thread. The PID belongs to the hold's source app, not a later frontmost app.
+    /// True when an AX probe at `cocoaPoint` (or of `pid`) would land in this process. AX requests
+    /// that resolve to us are answered in-process on the probe's background queue, where AppKit
+    /// hit-tests our main-actor views and Swift's isolation check traps (crash on
+    /// `com.openclip.ax-gesture-target`). Our own windows are never selection targets anyway.
+    @MainActor
+    internal static func touchesOwnUI(cocoaPoint: CGPoint, pid: pid_t) -> Bool {
+        if pid == ProcessInfo.processInfo.processIdentifier { return true }
+        return NSApp.windows.contains { $0.isVisible && $0.frame.contains(cocoaPoint) }
+    }
+
     internal static func pressIsOverEditableText(at point: CGPoint, pid: pid_t) async -> Bool {
         guard NSClassFromString("XCTestCase") == nil else { return false }
+        guard !touchesOwnUI(cocoaPoint: point, pid: pid) else { return false }
         let primaryHeight = NSScreen.screens.first(where: { $0.frame.origin == .zero })?.frame.height
             ?? NSScreen.screens.first?.frame.height
             ?? 0

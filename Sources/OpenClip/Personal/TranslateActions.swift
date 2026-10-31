@@ -50,23 +50,30 @@ struct TranslateAction: ConfigurableAction {
     static let groupID = "personal.translateTo"
 
     let id: String
-    let title: String
     let icon: ActionIcon
     /// nil translates into the automatic target (primary, or secondary when already primary).
     let fixedTarget: String?
 
     init() {
         id = Self.automaticID
-        title = "翻譯"
         icon = .symbol("translate")
         fixedTarget = nil
     }
 
     init(target: PersonalLanguage) {
         id = "\(Self.groupID).\(target.code)"
-        title = target.name
         icon = .text(target.badge)
         fixedTarget = target.code
+    }
+
+    /// The bar's tooltip says where 翻譯 goes when the target is locked.
+    var title: String {
+        if let fixedTarget { return PersonalLanguage.displayName(fixedTarget) }
+        return Self.titled("翻譯", preferences: PersonalLanguagePreferences())
+    }
+
+    static func titled(_ base: String, preferences: PersonalLanguagePreferences) -> String {
+        preferences.locked.map { "\(base) → \(PersonalLanguage.displayName($0))" } ?? base
     }
 
     var keywords: [String] { ["translate", "translation", "翻譯", "fanyi"] + (fixedTarget.map { [$0] } ?? []) }
@@ -141,7 +148,7 @@ struct TranslateAction: ConfigurableAction {
 /// selection can be replaced (editable field, Paste available).
 struct TranslateReplaceAction: ConfigurableAction, PasteRequiringAction {
     let id = "personal.translateReplace"
-    var title: String { "譯後替換" }
+    var title: String { TranslateAction.titled("譯後替換", preferences: PersonalLanguagePreferences()) }
     let icon = ActionIcon.symbol("character.cursor.ibeam")
     var keywords: [String] { ["translate replace", "replace", "替換", "翻譯替換"] }
 
@@ -165,6 +172,24 @@ struct TranslateReplaceAction: ConfigurableAction, PasteRequiringAction {
         } catch let error as OfflineTranslatorError {
             return .toast(TranslateAction.feedback(for: error))
         }
+    }
+}
+
+/// Last row of the "Translate to…" menu: opens the language settings, so adding a language is
+/// one click away from where it is missed.
+struct ManageLanguagesAction: ConfigurableAction {
+    let id = "\(TranslateAction.groupID).zzManage"
+    var title: String { "管理語言…" }
+    let icon = ActionIcon.symbol("slider.horizontal.3")
+    var keywords: [String] { ["languages", "settings", "語言", "設定", "add language"] }
+
+    @MainActor
+    func isEnabled(for context: ActionContext) -> Bool { true }
+
+    @MainActor
+    func perform(_ context: ActionContext) async throws -> ActionResult {
+        PersonalHubWindowController.show(.languages)
+        return .success
     }
 }
 

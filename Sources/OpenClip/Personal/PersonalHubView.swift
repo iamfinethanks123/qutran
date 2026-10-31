@@ -717,6 +717,8 @@ final class PersonalLanguageSettingsModel: ObservableObject {
     @Published var primary: String { didSet { persist() } }
     @Published var secondary: String { didSet { persist() } }
     @Published var favorites: [String] { didSet { persist() } }
+    /// nil = automatic target; otherwise 翻譯 / 譯後替換 always go to this language.
+    @Published var locked: String? { didSet { persist() } }
     @Published var statuses: [String: LanguagePairStatus] = [:]
 
     init(store: any SettingsStore = DefaultSettingsStore.shared) {
@@ -725,12 +727,14 @@ final class PersonalLanguageSettingsModel: ObservableObject {
         primary = prefs.primary
         secondary = prefs.secondary
         favorites = prefs.favorites
+        locked = prefs.locked
     }
 
     private func persist() {
         store.set(.personalPrimaryLanguage, value: primary)
         store.set(.personalSecondaryLanguage, value: secondary)
         store.set(.personalFavoriteLanguages, value: favorites)
+        store.set(.personalLockedLanguage, value: locked ?? "")
     }
 
     func toggleFavorite(_ code: String) {
@@ -767,25 +771,36 @@ struct LanguagesPane: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 26) {
-                PaneHeader(title: "語言", subtitle: "設定一鍵翻譯同「翻譯為…」選單") { EmptyView() }
+                PaneHeader(title: "語言", subtitle: "設定翻譯目標同「翻譯為…」選單") { EmptyView() }
 
-                section("一鍵翻譯", footnote: "揀咗嘅文字會翻做主語言；如果本身已經係主語言，就翻做副語言。") {
+                section("翻譯目標", footnote: targetFootnote) {
                     VStack(spacing: 0) {
-                        settingRow("主語言", detail: "大部分文字會翻做呢個語言") {
-                            LanguagePill(label: PersonalLanguage.displayName(settings.primary), selected: settings.primary, automaticTitle: nil) {
-                                if let code = $0 { settings.primary = code }
-                            }
+                        settingRow("「翻譯」同「譯後替換」", detail: "自動按原文揀語言，或者鎖定一個語言") {
+                            TargetModeToggle(isLocked: Binding(
+                                get: { settings.locked != nil },
+                                set: { settings.locked = $0 ? (settings.locked ?? settings.secondary) : nil }
+                            ))
                         }
                         rowDivider
-                        settingRow("副語言", detail: "原文已經係主語言時使用") {
-                            LanguagePill(label: PersonalLanguage.displayName(settings.secondary), selected: settings.secondary, automaticTitle: nil) {
-                                if let code = $0, code != settings.primary { settings.secondary = code }
+                        if let locked = settings.locked {
+                            settingRow("一律翻譯成", detail: "原文本身已經係呢個語言時，就改用下面嘅自動設定") {
+                                LanguagePill(label: PersonalLanguage.displayName(locked), selected: locked, automaticTitle: nil) {
+                                    if let code = $0 { settings.locked = code }
+                                }
                             }
+                        } else {
+                            autoRows
                         }
                     }
                 }
 
-                section("翻譯為… 選單", footnote: "數字代表喺選單入面嘅次序。") {
+                if settings.locked != nil {
+                    section("自動設定（後備）", footnote: "鎖定語言用唔到嘅時候，例如原文本身已經係嗰個語言，就會用呢組。") {
+                        autoRows
+                    }
+                }
+
+                section("翻譯為… 選單", footnote: "數字代表喺選單入面嘅次序。工具列「翻譯為…」最底嘅「管理語言…」都會打開呢頁。") {
                     LazyVGrid(columns: columns, alignment: .leading, spacing: 8) {
                         ForEach(PersonalLanguage.all) { language in
                             LanguageChip(
@@ -834,6 +849,30 @@ struct LanguagesPane: View {
         }
     }
 
+    private var targetFootnote: String {
+        if let locked = settings.locked {
+            return "揀咗嘅文字一律翻做\(PersonalLanguage.displayName(locked))。"
+        }
+        return "揀咗嘅文字會翻做主語言；如果本身已經係主語言，就翻做副語言。"
+    }
+
+    @ViewBuilder
+    private var autoRows: some View {
+        VStack(spacing: 0) {
+            settingRow("主語言", detail: "大部分文字會翻做呢個語言") {
+                LanguagePill(label: PersonalLanguage.displayName(settings.primary), selected: settings.primary, automaticTitle: nil) {
+                    if let code = $0 { settings.primary = code }
+                }
+            }
+            rowDivider
+            settingRow("副語言", detail: "原文已經係主語言時使用") {
+                LanguagePill(label: PersonalLanguage.displayName(settings.secondary), selected: settings.secondary, automaticTitle: nil) {
+                    if let code = $0, code != settings.primary { settings.secondary = code }
+                }
+            }
+        }
+    }
+
     private var rowDivider: some View {
         Rectangle().fill(HubTheme.hairline.opacity(0.5)).frame(height: 0.5).padding(.leading, 20)
     }
@@ -864,6 +903,35 @@ struct LanguagesPane: View {
         }
         .padding(.horizontal, 20)
         .padding(.vertical, 14)
+    }
+}
+
+/// 自動 / 鎖定 capsule switch, matching the vocabulary book's filter.
+private struct TargetModeToggle: View {
+    @Binding var isLocked: Bool
+
+    var body: some View {
+        HStack(spacing: 2) {
+            segment("自動", isOn: !isLocked) { isLocked = false }
+            segment("鎖定", isOn: isLocked) { isLocked = true }
+        }
+        .padding(3)
+        .background(Capsule().fill(HubTheme.sidebar))
+    }
+
+    private func segment(_ title: String, isOn: Bool, action: @escaping () -> Void) -> some View {
+        Button {
+            withAnimation(.easeOut(duration: 0.15)) { action() }
+        } label: {
+            Text(title)
+                .font(.system(size: 12, weight: isOn ? .semibold : .regular))
+                .foregroundStyle(isOn ? HubTheme.ink : HubTheme.inkSecondary)
+                .padding(.horizontal, 14)
+                .frame(height: 28)
+                .background(Capsule().fill(isOn ? HubTheme.card : .clear).shadow(color: .black.opacity(isOn ? 0.06 : 0), radius: 2, y: 1))
+                .contentShape(Capsule())
+        }
+        .buttonStyle(.plain)
     }
 }
 

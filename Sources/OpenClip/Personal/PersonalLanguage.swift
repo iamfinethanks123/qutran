@@ -60,6 +60,8 @@ extension SettingKey where Value == String {
     static var personalPrimaryLanguage: SettingKey<String> { SettingKey<String>("personal.translate.primary", defaultValue: "zh-Hant") }
     /// Target used when the selection is already in the primary language.
     static var personalSecondaryLanguage: SettingKey<String> { SettingKey<String>("personal.translate.secondary", defaultValue: "en") }
+    /// Locked target for 翻譯 and 譯後替換; empty means automatic (primary / secondary).
+    static var personalLockedLanguage: SettingKey<String> { SettingKey<String>("personal.translate.locked", defaultValue: "") }
 }
 
 extension SettingKey where Value == Bool {
@@ -80,8 +82,10 @@ struct PersonalLanguagePreferences: Sendable {
     let primary: String
     let secondary: String
     let favorites: [String]
+    /// When set, 翻譯 and 譯後替換 always translate into this language.
+    let locked: String?
 
-    init(primary: String, secondary: String, favorites: [String]) {
+    init(primary: String, secondary: String, favorites: [String], locked: String? = nil) {
         let known = { (code: String) in PersonalLanguage.named(code) != nil }
         self.primary = known(primary) ? primary : "zh-Hant"
         let secondaryCode = known(secondary) ? secondary : "en"
@@ -89,18 +93,27 @@ struct PersonalLanguagePreferences: Sendable {
         var seen = Set<String>()
         let cleaned = favorites.filter { known($0) && seen.insert($0).inserted }
         self.favorites = cleaned.isEmpty ? [self.primary, self.secondary] : cleaned
+        self.locked = locked.flatMap { known($0) ? $0 : nil }
     }
 
     init(settingsStore: any SettingsStore = DefaultSettingsStore.shared) {
         self.init(
             primary: settingsStore.get(.personalPrimaryLanguage),
             secondary: settingsStore.get(.personalSecondaryLanguage),
-            favorites: settingsStore.get(.personalFavoriteLanguages)
+            favorites: settingsStore.get(.personalFavoriteLanguages),
+            locked: settingsStore.get(.personalLockedLanguage)
         )
     }
 
-    /// Automatic target: the primary language, unless the text is already in it.
+    /// Target for 翻譯 / 譯後替換: the locked language, else the primary language unless the text is
+    /// already in it. Text already in the locked language falls back to the automatic pair.
     func automaticTarget(for source: String) -> String {
-        source == primary ? secondary : primary
+        if let locked, locked != source { return locked }
+        return source == primary ? secondary : primary
+    }
+
+    /// Short description of where 翻譯 goes, for button titles ("英文", or "自動").
+    var targetSummary: String {
+        locked.map(PersonalLanguage.displayName) ?? "自動"
     }
 }

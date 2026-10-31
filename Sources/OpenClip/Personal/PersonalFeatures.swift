@@ -190,9 +190,10 @@ enum PersonalFeatures {
         for staleID in registeredTargetIDs {
             ActionCoordinator.shared.unregister(actionID: staleID)
         }
-        for action in actions {
+        let rows: [any Action] = actions + [ManageLanguagesAction()]
+        for action in rows {
             ActionCoordinator.shared.register(action: action)
         }
-        registeredTargetIDs = actions.map(\.id)
+        registeredTargetIDs = rows.map(\.id)
     }
 }

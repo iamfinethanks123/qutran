@@ -30,6 +30,46 @@ final class PersonalTranslationTests: XCTestCase {
         XCTAssertEqual(prefs.favorites, ["en", "zh-Hant"])
     }
 
+    func testLockedTargetWinsUnlessTextIsAlreadyInIt() {
+        let prefs = PersonalLanguagePreferences(primary: "zh-Hant", secondary: "en", favorites: [], locked: "en")
+        XCTAssertEqual(prefs.automaticTarget(for: "ja"), "en")
+        XCTAssertEqual(prefs.automaticTarget(for: "zh-Hant"), "en")
+        // Already English: fall back to the automatic pair instead of a no-op.
+        XCTAssertEqual(prefs.automaticTarget(for: "en"), "zh-Hant")
+        XCTAssertEqual(prefs.targetSummary, "英文")
+    }
+
+    func testUnknownLockedLanguageMeansAutomatic() {
+        let prefs = PersonalLanguagePreferences(primary: "zh-Hant", secondary: "en", favorites: [], locked: "")
+        XCTAssertNil(prefs.locked)
+        XCTAssertEqual(prefs.targetSummary, "自動")
+        XCTAssertEqual(prefs.automaticTarget(for: "ja"), "zh-Hant")
+    }
+
+    func testTitlesShowTheLockedTarget() {
+        let locked = PersonalLanguagePreferences(primary: "zh-Hant", secondary: "en", favorites: [], locked: "ja")
+        let auto = PersonalLanguagePreferences(primary: "zh-Hant", secondary: "en", favorites: [])
+        XCTAssertEqual(TranslateAction.titled("翻譯", preferences: locked), "翻譯 → 日文")
+        XCTAssertEqual(TranslateAction.titled("譯後替換", preferences: auto), "譯後替換")
+    }
+
+    @MainActor
+    func testManageLanguagesRowSitsInTheTranslateToMenu() {
+        let manage = ManageLanguagesAction()
+        let group = TranslateAction.group()
+        let target = TranslateAction(target: PersonalLanguage.named("ja")!)
+        let children = group.subActions(in: [group, target, manage]).map(\.id)
+        XCTAssertEqual(children, [target.id, manage.id])
+        XCTAssertTrue(manage.isEnabled(for: context("anything")))
+    }
+
+    @MainActor
+    func testProbesNeverTargetOurOwnProcess() {
+        let ownPID = ProcessInfo.processInfo.processIdentifier
+        XCTAssertTrue(MacSelectionMonitor.touchesOwnUI(cocoaPoint: CGPoint(x: -99_999, y: -99_999), pid: ownPID))
+        XCTAssertFalse(MacSelectionMonitor.touchesOwnUI(cocoaPoint: CGPoint(x: -99_999, y: -99_999), pid: 1))
+    }
+
     // MARK: - Chinese conversion
 
     func testSimplifiedToTraditional() {
