@@ -25,9 +25,8 @@ internal final class MacSelectionMonitor: SelectionMonitoring {
     }
 
     internal var onSelection: ((SelectionContext, Bool?) -> Void)?
-    /// Starts the paste-availability probe for a target app (rules + AX) in parallel with selection
-    /// retrieval so the popup can apply the result on its first frame. Wired to the popup controller
-    /// by the composition root (AppDelegate).
+    internal var onPasteAvailabilityResolved: ((SelectionContext, Bool?) -> Void)?
+    /// Starts the paste-availability probe; passive presentation does not wait for its result.
     internal var preparePasteProbe: ((NSRunningApplication, AppPolicyContext) -> Task<Bool?, Never>?)?
     
     private var monitor: Any?
@@ -36,6 +35,7 @@ internal final class MacSelectionMonitor: SelectionMonitoring {
     public internal(set) var latestSelection: (context: SelectionContext, canPaste: Bool?)?
     private var mouseDownMonitor: Any?
     private var mouseDragMonitor: Any?
+    private var dragChromeProbe: (pid: pid_t, point: CGPoint, task: Task<Bool, Never>)?
     private var appActivationObserver: NSObjectProtocol?
     internal var mouseHoldTask: Task<Void, Never>?
     private var mouseDownLocation: CGPoint?
@@ -129,14 +129,8 @@ internal final class MacSelectionMonitor: SelectionMonitoring {
     internal static let dragThresholdSquared: CGFloat = OpenSelectionMonitor.dragThresholdSquared
     private static let holdStationaryConfirmDelayNanoseconds: UInt64 = 90_000_000
     private static let multiClickWindowSettleDelayNanoseconds: UInt64 = 50_000_000
-    /// A double-click may be the first two presses of a triple-click; the third press usually
-    /// lands 100–200 ms after the second release. Waiting that long lets the third press cancel
-    /// this read instead of flashing a word popup it immediately replaces. Capped so a long
-    /// system double-click interval doesn't make every double-click feel slow.
-    internal var doubleClickSettleNanoseconds: UInt64 = {
-        let interval = min(max(NSEvent.doubleClickInterval, 0.05), 0.22)
-        return UInt64(interval * 1_000_000_000)
-    }()
+    /// Allow native window zoom to settle without waiting through the triple-click interval.
+    internal var doubleClickSettleNanoseconds: UInt64 = 60_000_000
 
     internal static func holdStationary(downPoint: CGPoint?, pointer: CGPoint, buttonPressed: Bool) -> Bool {
         OpenSelectionMonitor.holdStationary(downPoint: downPoint, pointer: pointer, buttonPressed: buttonPressed)
@@ -345,6 +339,8 @@ internal final class MacSelectionMonitor: SelectionMonitoring {
 
     /// A new press or application activation invalidates any earlier automatic copy attempt.
     internal func cancelPendingSelection() {
+        dragChromeProbe?.task.cancel()
+        dragChromeProbe = nil
         debounceTask?.cancel()
         debounceTask = nil
         mouseHoldTask?.cancel()
@@ -572,6 +568,14 @@ internal final class MacSelectionMonitor: SelectionMonitoring {
             }
             mouseHoldTask = nil
             triggeredByHold = false
+            if dragChromeProbe == nil, let app = selectionSourceApp,
+               settingsStore.get(.pauseUntilTimestamp) <= Date().timeIntervalSince1970,
+               !shouldSuppress(for: app.bundleIdentifier) {
+                let check = isPressOnWindowChrome
+                dragChromeProbe = (app.processIdentifier, downPoint, Task { @MainActor in
+                    await check(downPoint, app.processIdentifier)
+                })
+            }
         }
     }
 
@@ -580,6 +584,9 @@ internal final class MacSelectionMonitor: SelectionMonitoring {
         cursor: CGPoint,
         clickCount: Int
     ) {
+        let releasedAt = ProcessInfo.processInfo.systemUptime
+        let preparedChromeProbe = dragChromeProbe
+        dragChromeProbe = nil
         selectionSourceApp = app
         let pressCursor = mouseDownCursor
         mouseDownCursor = nil
@@ -657,13 +664,25 @@ internal final class MacSelectionMonitor: SelectionMonitoring {
             guard self.isSelectionSourceActive(app) else {
                 self.recordRead(.init(status: Task.isCancelled ? .cancelled : .targetChanged)); return
             }
-            if let downPoint, await self.isPressOnWindowChrome(downPoint, app.processIdentifier) {
+            defer { preparedChromeProbe?.task.cancel() }
+            let chromeStartedAt = ProcessInfo.processInfo.systemUptime
+            if let downPoint {
+                let isChrome: Bool
+                if let preparedChromeProbe, preparedChromeProbe.pid == app.processIdentifier,
+                   preparedChromeProbe.point == downPoint {
+                    isChrome = await preparedChromeProbe.task.value
+                } else {
+                    isChrome = await self.isPressOnWindowChrome(downPoint, app.processIdentifier)
+                }
                 guard self.isSelectionSourceActive(app) else { return }
-                Log.selection.debug("monitor: skipped press on window chrome bundleID=\(app.bundleIdentifier ?? "unknown", privacy: .public)")
-                self.latestSelection = nil
-                self.recordRead(.init(status: .copyBlocked))
-                return
+                if isChrome {
+                    Log.selection.debug("monitor: skipped press on window chrome bundleID=\(app.bundleIdentifier ?? "unknown", privacy: .public)")
+                    self.latestSelection = nil
+                    self.recordRead(.init(status: .copyBlocked))
+                    return
+                }
             }
+            let chromeReadyAt = ProcessInfo.processInfo.systemUptime
             guard self.isSelectionSourceActive(app) else { return }
             // Native title-bar double-click zoom can update the window frame just after mouse-up.
             // Let AppKit settle that operation before treating a multi-click as a text gesture.
@@ -701,7 +720,7 @@ internal final class MacSelectionMonitor: SelectionMonitoring {
             // 3. A foreign overlay owns the key window
             let isAutoEnabled = self.settingsStore.get(.isAppEnabled)
             let allowCopyFallback = isAutoEnabled && !policy.hotkeyOnly && !self.isOverlayPresent(cursor)
-            // Direct AX check executed IMMEDIATELY (0ms delay) for instant smooth opening
+            let readStartedAt = ProcessInfo.processInfo.systemUptime
             let response = await retriever.retrieveResponse(
                 for: appIdentity,
                 policy: policy,
@@ -710,6 +729,8 @@ internal final class MacSelectionMonitor: SelectionMonitoring {
                 trigger: clickCount >= 2 ? .doubleClick : .dragEnd
             )
             if Task.isCancelled { self.recordRead(.init(status: .cancelled, traceID: response.traceID)); return }
+            let readFinishedAt = ProcessInfo.processInfo.systemUptime
+            Log.selection.info("[Trace#\(response.traceID ?? 0, privacy: .public)] selection timing chromeWaitMS=\(Int((chromeReadyAt - chromeStartedAt) * 1000), privacy: .public) readMS=\(Int((readFinishedAt - readStartedAt) * 1000), privacy: .public) releaseToReadMS=\(Int((readFinishedAt - releasedAt) * 1000), privacy: .public)")
             await self.deliverSelection(
                 response: response,
                 app: app,
@@ -718,7 +739,8 @@ internal final class MacSelectionMonitor: SelectionMonitoring {
                 cursor: cursor,
                 mouseDownLocation: downPoint,
                 gesture: gesture,
-                probeTask: nil
+                probeTask: nil,
+                releasedAt: releasedAt
             )
         }
     }
@@ -804,7 +826,8 @@ internal final class MacSelectionMonitor: SelectionMonitoring {
         cursor: CGPoint,
         mouseDownLocation: CGPoint?,
         gesture: SelectionGestureLocality.Gesture?,
-        probeTask: Task<Bool?, Never>?
+        probeTask: Task<Bool?, Never>?,
+        releasedAt: TimeInterval? = nil
     ) async {
         guard isSelectionSourceActive(app) else {
             recordRead(.init(status: Task.isCancelled ? .cancelled : .targetChanged, traceID: response.traceID))
@@ -845,16 +868,8 @@ internal final class MacSelectionMonitor: SelectionMonitoring {
         // Mouse-up starts this only after the retrieval has produced valid text. Keyboard callers
         // may pass a probe started alongside retrieval; hold-to-popup keeps its separate flow.
         let pasteProbeTask = probeTask ?? preparePasteProbe?(app, policy)
-        let canPaste = await pasteProbeTask?.value
-        guard isSelectionSourceActive(app) else {
-            recordRead(.init(status: Task.isCancelled ? .cancelled : .targetChanged, traceID: response.traceID)); return
-        }
+        let canPaste = PasteAvailability.effective(policy: policy, probe: nil)
         let context = capturedContext.with(pasteTargetAvailable: canPaste)
-        prewarmInlineActions(for: context)
-        await InlineResultEvaluator.shared.awaitPrewarmed(timeout: 0.025)
-        guard isSelectionSourceActive(app) else {
-            recordRead(.init(status: Task.isCancelled ? .cancelled : .targetChanged, traceID: response.traceID)); return
-        }
         latestSelection = (context, canPaste)
         recordRead(.init(context: context, canPaste: canPaste, status: .selection, traceID: response.traceID))
         // "Appear Automatically" (isAppEnabled) is the global form of the per-app `hotkeyOnly`
@@ -864,8 +879,26 @@ internal final class MacSelectionMonitor: SelectionMonitoring {
         // `latestSelection` stays warm for the hotkey.
         if !policy.hotkeyOnly, self.settingsStore.get(.isAppEnabled) {
             self.onSelection?(context, canPaste)
+            if let releasedAt {
+                Log.selection.info("[Trace#\(response.traceID ?? 0, privacy: .public)] selection timing releaseToPresentationMS=\(Int((ProcessInfo.processInfo.systemUptime - releasedAt) * 1000), privacy: .public)")
+            }
         } else {
             Log.selection.debug("[Trace#\(response.traceID ?? 0, privacy: .public)] presentation blocked hotkeyOnly=\(policy.hotkeyOnly, privacy: .public) enabled=\(self.settingsStore.get(.isAppEnabled), privacy: .public)")
+        }
+        guard let pasteProbeTask else { return }
+        let resolvedPaste = await pasteProbeTask.value
+        guard isSelectionSourceActive(app), selectionGeneration == context.selectionGeneration else {
+            if latestSelection?.context.selectionGeneration == context.selectionGeneration,
+               latestSelection?.context.timestamp == context.timestamp {
+                latestSelection = nil
+            }
+            return
+        }
+        let resolvedContext = context.with(pasteTargetAvailable: PasteAvailability.effective(policy: policy, probe: resolvedPaste))
+        latestSelection = (resolvedContext, resolvedContext.pasteTargetAvailable)
+        recordRead(.init(context: resolvedContext, canPaste: resolvedContext.pasteTargetAvailable, status: .selection, traceID: response.traceID))
+        if !policy.hotkeyOnly, settingsStore.get(.isAppEnabled) {
+            onPasteAvailabilityResolved?(resolvedContext, resolvedContext.pasteTargetAvailable)
         }
     }
 

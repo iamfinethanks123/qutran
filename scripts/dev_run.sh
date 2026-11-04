@@ -1,10 +1,7 @@
 #!/bin/bash
 # Fast local development build, install to ~/Applications, and run.
 #
-# Builds OpenClip in Debug mode with bundle ID com.openclip.OpenClip.dev
-# and installs to ~/Applications/Qutran.app so macOS TCC Accessibility
-# permissions stay permanently granted and never collide with /Applications/OpenClip.app.
-# Use --verbose to show the full xcodebuild output.
+# Use --release for optimized local performance testing and --verbose for full build output.
 
 set -eo pipefail
 
@@ -14,9 +11,13 @@ cd "$PROJECT_DIR"
 NO_INSTALL=false
 FORCE_GENERATE=false
 VERBOSE=false
+BUILD_CONFIGURATION=Debug
 
 for arg in "$@"; do
   case "$arg" in
+    --release)
+      BUILD_CONFIGURATION=Release
+      ;;
     --no-install)
       NO_INSTALL=true
       ;;
@@ -27,7 +28,8 @@ for arg in "$@"; do
       VERBOSE=true
       ;;
     --help|-h)
-      printf 'Usage: ./scripts/dev_run.sh [--no-install] [--generate] [--verbose]\n'
+      printf 'Usage: ./scripts/dev_run.sh [--release] [--no-install] [--generate] [--verbose]\n'
+      printf '  --release     Build with Release optimizations\n'
       printf '  --no-install  Launch from DerivedData without copying the app\n'
       printf '  --generate    Regenerate the Xcode project before building\n'
       printf '  --verbose     Show the full xcodebuild output\n'
@@ -149,14 +151,15 @@ elif [ -n "${OPENCLIP_DEV_SIGN_IDENTITY:-}" ]; then
   SIGNING_ARGS+=("CODE_SIGN_IDENTITY=$OPENCLIP_DEV_SIGN_IDENTITY" "CODE_SIGN_STYLE=Manual")
 fi
 
-DERIVED_DATA="$PROJECT_DIR/build.noindex/DerivedData"
-BUILT_APP="$DERIVED_DATA/Build/Products/Debug/Qutran.app"
+DERIVED_DATA="${OPENCLIP_DERIVED_DATA:-$PROJECT_DIR/build.noindex/DerivedData}"
+BUILT_APP="$DERIVED_DATA/Build/Products/$BUILD_CONFIGURATION/Qutran.app"
 
 BUILD_CMD=(
   xcodebuild
   -scheme OpenClip
-  -configuration Debug
+  -configuration "$BUILD_CONFIGURATION"
   -destination 'platform=macOS,arch=arm64'
+  ONLY_ACTIVE_ARCH=YES
   -derivedDataPath "$DERIVED_DATA"
   "${SIGNING_ARGS[@]}"
   build
@@ -164,7 +167,7 @@ BUILD_CMD=(
 
 BUILD_LOG=$(mktemp "${TMPDIR:-/tmp}/openclip-build.XXXXXX")
 BUILD_RESULT='Running'
-stage_line '>' "$C_ACCENT" 'Build · Debug' 'Building'
+stage_line '>' "$C_ACCENT" "Build · $BUILD_CONFIGURATION" 'Building'
 
 # Save all Xcode output for warning summaries and failure diagnostics. In normal
 # mode, use xcbeautify if installed; otherwise print a compact progress heartbeat.

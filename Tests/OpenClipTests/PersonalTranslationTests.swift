@@ -4,6 +4,26 @@ import AppKit
 @testable import Core
 
 final class PersonalTranslationTests: XCTestCase {
+    func testTextAnalysisReusesResultAndCachesUndeterminedLanguage() {
+        let cache = TextAnalysisCache<String?>()
+        var evaluations = 0
+        XCTAssertNil(cache.value(for: "???") { evaluations += 1; return nil })
+        XCTAssertNil(cache.value(for: "???") { evaluations += 1; return "wrong" })
+        XCTAssertEqual(evaluations, 1)
+        XCTAssertEqual(cache.value(for: "hello") { evaluations += 1; return "en" }, "en")
+        XCTAssertEqual(cache.value(for: "hello") { evaluations += 1; return "wrong" }, "en")
+        XCTAssertEqual(evaluations, 2)
+    }
+
+    func testTextAnalysisKeepsOnlyMostRecentSelection() {
+        let cache = TextAnalysisCache<String>()
+        var evaluations = 0
+        for text in ["one", "two", "one"] {
+            XCTAssertEqual(cache.value(for: text) { evaluations += 1; return text }, text)
+        }
+        XCTAssertEqual(evaluations, 3)
+    }
+
     private func context(_ text: String) -> ActionContext {
         ActionContext(selection: SelectionContext(text: text, sourceApp: AppIdentity(NSRunningApplication.current)))
     }

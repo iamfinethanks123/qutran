@@ -9,6 +9,8 @@ import Core
 
 @MainActor
 public final class PopupModeStore: ObservableObject {
+    @Published var selectionUpdate: (actions: [any Action], context: ActionContext)?
+
     /// Current screen: action bar, search palette, or result card.
     @Published public var mode: PopupMode = .actions
     /// The current search scope, if the palette is opened into a group's sub-actions.

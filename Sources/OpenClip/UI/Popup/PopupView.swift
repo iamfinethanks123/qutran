@@ -14,9 +14,12 @@ import SDWebImageSwiftUI
 
 @MainActor
 public struct PopupView: View {
-    public let actions: [any Action]
-    public let allActions: [any Action]
-    public let context: ActionContext
+    private let initialActions: [any Action]
+    private let initialAllActions: [any Action]
+    private let initialContext: ActionContext
+    public var actions: [any Action] { modeStore.selectionUpdate?.actions ?? initialActions }
+    public var allActions: [any Action] { modeStore.selectionUpdate?.actions ?? initialAllActions }
+    public var context: ActionContext { modeStore.selectionUpdate?.context ?? initialContext }
     public let onResult: @MainActor (ActionResult) -> Void
     public let onContentSizeChange: (@MainActor (CGSize) -> Void)?
     /// active=true while AI runs or shows a result; cardAboveBar=true when the card renders above the bar.
@@ -199,9 +202,9 @@ public struct PopupView: View {
         _contextualPillPosition = Setting(SettingKey.contextualPillPosition, store: settingsStore)
         _popupAlignment = Setting(SettingKey.popupAlignment, store: settingsStore)
         _completionCopyToClipboard = Setting(SettingKey.completionCopyToClipboard, store: settingsStore)
-        self.actions = actions
-        self.allActions = allActions ?? actions
-        self.context = context
+        self.initialActions = actions
+        self.initialAllActions = allActions ?? actions
+        self.initialContext = context
         self.onResult = onResult
         self.onContentSizeChange = onContentSizeChange
         self.onAIStateChange = onAIStateChange

@@ -176,3 +176,14 @@ if still off-Space, or `space-recovery-verified` when it reaches the active Spac
 The latter confirms membership, not user-observed visibility. A new show or hide
 invalidates stale checks. No selection text,
 clipboard payload, window title, or document content is logged.
+
+## Selection-to-toolbar timings
+
+`Log.selection` records `selection timing` (remaining chrome wait, text read, release-to-read and
+release-to-presentation callback milliseconds) and `toolbar timing` (action resolution, layout
+and show-to-window-order milliseconds). These are CPU/UI scheduling measurements, not compositor
+first-pixel timestamps. They include trace IDs and numeric timings, never selected text.
+
+`Log.coordinator` records `action eligibility` for predicates taking at least 2 ms, including
+only action ID, trace ID and duration. This distinguishes slow individual actions from layout
+cost without recording selection contents.

@@ -15,6 +15,7 @@ import Core
 @MainActor
 public class PopupWindowController {
     var panel: PopupPanel?
+    private var reusableHostingView: PopupPanel.ContentView?
     // Re-shows keep the AI session but invalidate pending Space recovery from an earlier presentation.
     private(set) var presentationAttemptID = UUID()
     private var didAttemptSpaceRecovery = false
@@ -175,6 +176,19 @@ public class PopupWindowController {
         }.store(in: &cancellables)
     }
 
+    func preparePresentation() {
+        guard reusableHostingView == nil else { return }
+        let preview = PopupView(
+            settingsStore: settingsStore, actions: [],
+            context: ActionContext(selection: SelectionContext(text: "")),
+            isStatic: true, onResult: { _ in }
+        )
+        let hosting = PopupPanel.ContentView(rootView: AnyView(preview))
+        hosting.layoutSubtreeIfNeeded()
+        _ = hosting.fittingSize
+        reusableHostingView = hosting
+    }
+
     /// Starts the paste-availability probe (rules first, then AX), run in parallel with selection retrieval. Not cached,
     /// since paste depends on focus context, unless a per-app rule answers definitively.
     public func preparePasteProbe(for app: NSRunningApplication?, policy: AppPolicyContext) -> Task<Bool?, Never> {
@@ -188,7 +202,7 @@ public class PopupWindowController {
     }
 
     func show(for context: SelectionContext, pasteAvailable: Bool?, preservingSessionID: UUID?, streamingTask: Task<Void, Never>?, initialMode: PopupMode = .actions, captureFeedback: StatusFeedback? = nil) {
-        ActionSound.prepareIfEnabled()
+        let showStartedAt = ProcessInfo.processInfo.systemUptime
         presentationAttemptID = UUID()
         didAttemptSpaceRecovery = false
         let attemptID = presentationAttemptID
@@ -227,6 +241,7 @@ public class PopupWindowController {
         let actionContext = ActionContext(selection: selectionContext, modifiers: [])
         currentActionContext = actionContext
         let availableActions = ActionCoordinator.shared.resolveActions(for: actionContext)
+        let actionsReadyAt = ProcessInfo.processInfo.systemUptime
 
         let panel = self.panel ?? PopupPanel()
         self.panel = panel
@@ -263,7 +278,8 @@ public class PopupWindowController {
         PaletteRowShortcuts.setActive(initialMode == .search)
         modeStore.searchResultsAbove = cardAbove
         modeStore.subBarAbove = PopupPositioner.isPlacedAbove(frame: tempFrame, releasePoint: context.cursorPosition)
-        // Probed before this frame so Paste/Cut are gated on the first render; nil keeps them visible.
+        // Unknown availability keeps the existing Paste/Cut visibility until the probe resolves.
+        modeStore.selectionUpdate = nil
         modeStore.canPaste = pasteAvailable
 
         let activeActions = pasteAvailable == false
@@ -272,12 +288,7 @@ public class PopupWindowController {
         self.currentActions = activeActions
 
         modeStore.inlineResults.removeAll()
-        let catalog = ActionCoordinator.shared.searchCatalog(for: actionContext)
-        var combinedActions = activeActions
-        for item in catalog where !combinedActions.contains(where: { $0.id == item.id }) {
-            combinedActions.append(item)
-        }
-        let inlineActions = combinedActions.filter { $0.chrome.isInlineResult }
+        let inlineActions = activeActions.filter { $0.chrome.isInlineResult }
         let textHash = context.text.hashValue
 
         for action in inlineActions {
@@ -396,9 +407,13 @@ public class PopupWindowController {
             }
         )
         syncPanelAppearance(panel)
-        let hosting = PopupPanel.ContentView(rootView: rootView)
+        let layoutStartedAt = ProcessInfo.processInfo.systemUptime
+        let hosting = (panel.contentView as? PopupPanel.ContentView)
+            ?? reusableHostingView ?? PopupPanel.ContentView(rootView: AnyView(EmptyView()))
+        hosting.present(rootView, id: attemptID)
+        reusableHostingView = hosting
         hosting.onMouseMoved = { [weak self] in self?.handleTrackingMouseMoved() }
-        panel.contentView = hosting
+        if panel.contentView !== hosting { panel.contentView = hosting }
         panel.contentView?.layoutSubtreeIfNeeded()
         let size = sanitizedPopupSize(panel.contentView?.fittingSize)
 
@@ -423,6 +438,24 @@ public class PopupWindowController {
             panel.orderFront(nil)
         }
         
+        let orderedAt = ProcessInfo.processInfo.systemUptime
+        Log.selection.info("[Trace#\(context.traceID ?? 0, privacy: .public)] toolbar timing resolveMS=\(Int((actionsReadyAt - showStartedAt) * 1000), privacy: .public) layoutMS=\(Int((orderedAt - layoutStartedAt) * 1000), privacy: .public) showToOrderMS=\(Int((orderedAt - showStartedAt) * 1000), privacy: .public)")
+        Task { @MainActor [weak self] in
+            do { try await Task.sleep(for: .milliseconds(20)) } catch { return }
+            guard let self, self.presentationAttemptID == attemptID,
+                  self.aiSessionID == aiSession, let current = self.currentActionContext else { return }
+            let catalog = ActionCoordinator.shared.searchCatalog(for: current)
+            PopupSearchView.prewarmIndex(catalog: catalog)
+            for action in catalog where action.chrome.isInlineResult {
+                guard self.modeStore.inlineResults[action.id] == nil,
+                      evaluator.runningTask(for: action.id, sessionID: aiSession) == nil else { continue }
+                evaluator.startEvaluation(action: action, context: current, sessionID: aiSession) { [weak self] result in
+                    guard let self, self.aiSessionID == aiSession, let result, !result.isEmpty else { return }
+                    self.modeStore.inlineResults[action.id] = result
+                }
+            }
+            ActionSound.prepareIfEnabled()
+        }
         setupMonitors()
         // Two bounded snapshots catch delayed AppKit hiding/Space changes without polling.
         Task { @MainActor [weak self] in
@@ -526,8 +559,27 @@ public class PopupWindowController {
         let actionContext = ActionContext(selection: selectionContext, modifiers: [])
         currentActionContext = actionContext
         modeStore.mode = initialMode
+        modeStore.selectionUpdate = nil
         modeStore.canPaste = pasteAvailable
         openedDirectlyInSearch = (initialMode == .search)
+    }
+
+    func updatePasteAvailability(for context: SelectionContext, canPaste: Bool?) {
+        guard let current = currentContext,
+              current.selectionGeneration == context.selectionGeneration,
+              current.timestamp == context.timestamp,
+              current.sourceApp.bundleIdentifier == context.sourceApp.bundleIdentifier,
+              current.text == context.text else { return }
+        let selection = current.with(pasteTargetAvailable: PasteAvailability.effective(policy: current.appPolicy, probe: canPaste))
+        let actionContext = ActionContext(selection: selection, modifiers: [])
+        let actions = ActionCoordinator.shared.resolveActions(for: actionContext).filter {
+            selection.pasteTargetAvailable != false || !($0 is any PasteRequiringAction)
+        }
+        currentContext = selection
+        currentActionContext = actionContext
+        currentActions = actions
+        modeStore.canPaste = selection.pasteTargetAvailable
+        modeStore.selectionUpdate = (actions, actionContext)
     }
 
     /// Hotkey-driven toggle: dismisses the popup if already visible.
@@ -1061,6 +1113,7 @@ public class PopupWindowController {
         modeStore.resultCard = nil
         modeStore.resultCardSize = nil
         modeStore.isSurfaceUserSized = false
+        modeStore.selectionUpdate = nil
         modeStore.canPaste = nil
         modeStore.inlineResults.removeAll()
         // Clear click intent so a stale intent or declared delivery can't leak into the next session.
