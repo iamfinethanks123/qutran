@@ -1,4 +1,30 @@
 name: OpenClip
+configs:
+  Debug: debug
+  Testing: debug
+  Release: release
+schemes:
+  OpenClip:
+    build:
+      targets:
+        OpenClip: all
+    run:
+      config: Debug
+    profile:
+      config: Release
+    archive:
+      config: Release
+    test:
+      config: Testing
+      targets: [OpenClipTests]
+  OpenClipTests:
+    build:
+      targets:
+        OpenClip: [test]
+        OpenClipTests: [test]
+    test:
+      config: Testing
+      targets: [OpenClipTests]
 options:
   bundleIdPrefix: com.openclip
   developmentLanguage: en
@@ -95,6 +121,10 @@ targets:
         Debug:
           PRODUCT_BUNDLE_IDENTIFIER: com.qutran.Qutran
           INFOPLIST_KEY_CFBundleDisplayName: Qutran
+        Testing:
+          PRODUCT_BUNDLE_IDENTIFIER: com.qutran.Qutran.TestHost
+          PRODUCT_NAME: Qutran Test Host
+          INFOPLIST_KEY_CFBundleDisplayName: Qutran Test Host
         Release:
           PRODUCT_BUNDLE_IDENTIFIER: com.qutran.Qutran
           INFOPLIST_KEY_CFBundleDisplayName: Qutran
@@ -118,6 +148,9 @@ targets:
         BUNDLE_LOADER: "$(TEST_HOST)"
         SWIFT_VERSION: "6.0"
         SWIFT_STRICT_CONCURRENCY: complete
+      configs:
+        Testing:
+          TEST_HOST: "$(BUILT_PRODUCTS_DIR)/Qutran Test Host.app/Contents/MacOS/Qutran Test Host"
     dependencies:
       - target: OpenClip
       - package: OpenSelection

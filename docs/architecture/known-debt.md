@@ -914,6 +914,70 @@ BrowserTabOpener front-window scripting and LaunchServices fallback. JavaScript 
 and deduplication when opening multiple URLs. Firefox has no tab scripting; from a private window
 (detected by the English "Private Browsing" title suffix) it runs `firefox --private-window URL`.
 
+## Selection popup latency
+
+- Passive selection delivery begins inline evaluation during visible-action resolution without
+  awaiting its result before showing the toolbar. PopupWindowController consumes ready results
+  and subscribes to pending evaluations with session guards, so slow inline actions cannot hold
+  up toolbar presentation.
+- Passive selection delivery shows the toolbar before awaiting the AX Paste menu probe. Unknown
+  availability retains the existing visibility rules; confirmed paste-target requirements remain
+  unavailable until the probe resolves. The controller updates the action catalog and context in
+  place, without restarting presentation, and rejects updates for a different selection or a hidden
+  popup. A new selection cancels the old delivery before its probe can publish.
+- Double-clicks use a 60 ms window-settle budget instead of waiting through the triple-click
+  interval. A later third press cancels pending reads; if the word bar has already
+  appeared, the paragraph selection replaces it. AX selection retrieval and title-bar hit testing
+  remain on the critical path.
+- `InlineResultEvaluator.awaitPrewarmed` is not a strict timeout: its task group waits for child
+  tasks awaiting unstructured evaluations to finish even after cancellation. Keep it off the
+  presentation path.
+
+- Drag selection begins its read-only window-chrome probe while the pointer is moving and reuses
+  the result on release. A new gesture cancels it, and the PID/press point must match before reuse.
+  Retrieval still waits for the chrome verdict, so moving/resizing windows never triggers Copy.
+- Passive presentation does not build the search index before showing the bar. The controller
+  evaluates visible inline actions first and prepares the full search catalog and audio output
+  after ordering the window, with session guards. Translation prefetch still begins during
+  visible-action resolution. `scripts/dev_run.sh --release` installs an optimized build at the
+  same path and with the same local signing identity as the Debug build.
+
+- Language and Chinese-script inference each retain only the latest text/result in a lock-protected
+  cache; nil results are cached too. Action visibility is memoized only within one resolution,
+  with disabled entries filtered before invoking their predicates. New selections and changes
+  to settings still receive fresh visibility decisions.
+- The hosting view is prepared offscreen at startup and reused. A unique presentation identity
+  wraps each new PopupView, resetting all local SwiftUI state while retaining the AppKit host.
+  Offscreen preparation never orders a window or resolves actions for sample text.
+
+## Permission status and local updates
+
+- Screen Recording requests preserve existing TCC entries; opening the permission pane never
+  runs `tccutil reset`. Grant checks reflect the running process, not a saved UI preference.
+- Permission status refreshes immediately when monitoring starts and on app activation, including
+  after another permission view has stopped polling. Returning from System Settings updates both
+  rows; macOS may still require an app restart before a new grant applies.
+- Local reinstalls must keep the installation path, bundle identifier and signing identity stable.
+  `scripts/dev_run.sh` reads the gitignored `keys/dev-signing-identity` fingerprint. Switching
+  between ad-hoc, development and release signatures can require a new grant; the app must not
+  display a fabricated granted state to hide a signature mismatch.
+
+- The recovery view handles the initial trust value as well as later changes, so a permission
+  grant detected before its observer attaches still dismisses the window. Permission diagnostics
+  log booleans, PID and bundle path only. Relaunch requests a new process and leaves the current
+  process running if the replacement cannot be started.
+
+## Test host identity and TCC
+
+- The Testing configuration builds `Qutran Test Host.app` as `com.qutran.Qutran.TestHost`.
+  The test scheme and runner both select this configuration; Debug and Release retain the
+  installed app identity. Testing must never use the installed app's bundle identifier: macOS
+  can attach the Accessibility UI entry to the ad-hoc test host's cdhash and then reject the
+  installed app despite the switch appearing on. The mismatch was confirmed in tccd logs.
+- Keep the test identity separate even when changing signing certificates. A runtime regression
+  test checks the host identity. Stale test-host LaunchServices registrations created before
+  this separation must be removed before re-adding the installed app's permission entry.
+
 ## Popup arrival animation
 
 - New popup sessions fade from 45% opacity and a 4 pt blur to their final appearance in

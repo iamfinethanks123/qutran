@@ -19,6 +19,7 @@ public final class PermissionRecoveryWindowController: NSWindowController, NSWin
 
     public convenience init(
         isUpdate: Bool,
+        permissionManager: PermissionManager = .shared,
         onComplete: @escaping @MainActor () -> Void,
         onDismiss: @escaping @MainActor () -> Void = {}
     ) {
@@ -43,6 +44,7 @@ public final class PermissionRecoveryWindowController: NSWindowController, NSWin
 
         let view = PermissionRecoveryView(
             isUpdate: isUpdate,
+            permissionManager: permissionManager,
             onComplete: { [weak self] in
                 self?.handleComplete()
             },

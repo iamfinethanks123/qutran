@@ -11,6 +11,7 @@ enum ChineseScript: Sendable, Equatable {
 }
 
 enum ChineseConverter {
+    private static let scriptCache = TextAnalysisCache<ChineseScript?>()
     private static let toTraditionalTransform = StringTransform("Hans-Hant")
     private static let toSimplifiedTransform = StringTransform("Hant-Hans")
 
@@ -45,6 +46,10 @@ enum ChineseConverter {
     /// Guesses the script by counting characters each direction would change. Returns nil when the
     /// text has no Han characters or only script-neutral ones.
     static func detectScript(_ text: String) -> ChineseScript? {
+        scriptCache.value(for: text) { detectUncachedScript(text) }
+    }
+
+    private static func detectUncachedScript(_ text: String) -> ChineseScript? {
         guard containsHan(text) else { return nil }
         let simplifiedOnly = changedCharacterCount(text, toTraditional(text))
         let traditionalOnly = changedCharacterCount(text, toSimplified(text))

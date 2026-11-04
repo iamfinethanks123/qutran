@@ -942,6 +942,104 @@ final class MacSelectionMonitorTests: XCTestCase {
         XCTAssertEqual(probeCalls, 1, "A valid selection should still probe Paste availability")
     }
 
+    func testSlowPasteProbeDoesNotBlockPresentationAndUpdatesWithoutReshow() async throws {
+        let monitor = makeMonitor()
+        monitor.policyResolver = { _ in .default }
+        monitor.retriever = SelectionRetrievalCoordinator(inspect: {
+            Self.fixtureTarget(role: "AXTextField", selectedText: "valid selection")
+        }, copyCapture: { _ in nil })
+        var finishProbe: CheckedContinuation<Bool?, Never>?
+        monitor.preparePasteProbe = { _, _ in
+            Task { await withCheckedContinuation { finishProbe = $0 } }
+        }
+        var shown = 0
+        var resolved = 0
+        monitor.onSelection = { _, canPaste in
+            XCTAssertNil(canPaste)
+            shown += 1
+        }
+        monitor.onPasteAvailabilityResolved = { context, canPaste in
+            XCTAssertEqual(canPaste, true)
+            XCTAssertEqual(context.pasteTargetAvailable, true)
+            resolved += 1
+        }
+        monitor.handleMouseDown(at: .zero)
+        monitor.handleMouseUp(app: MockTestApp(bundleID: "com.apple.TextEdit"), cursor: CGPoint(x: 100, y: 100), clickCount: 1)
+        let delivery = monitor.debounceTask
+        try await waitUntil { finishProbe != nil }
+        XCTAssertEqual(shown, 1)
+        XCTAssertEqual(resolved, 0)
+        finishProbe?.resume(returning: true)
+        await delivery?.value
+        XCTAssertEqual(shown, 1)
+        XCTAssertEqual(resolved, 1)
+        XCTAssertEqual(monitor.latestSelection?.canPaste, true)
+    }
+
+    func testNewGestureDiscardsPendingPasteProbe() async throws {
+        let monitor = makeMonitor()
+        monitor.policyResolver = { _ in .default }
+        monitor.retriever = SelectionRetrievalCoordinator(inspect: {
+            Self.fixtureTarget(role: "AXTextField", selectedText: "old selection")
+        }, copyCapture: { _ in nil })
+        var finishProbe: CheckedContinuation<Bool?, Never>?
+        monitor.preparePasteProbe = { _, _ in
+            Task { await withCheckedContinuation { finishProbe = $0 } }
+        }
+        monitor.onPasteAvailabilityResolved = { _, _ in XCTFail("The old probe must be discarded") }
+        monitor.handleMouseDown(at: .zero)
+        monitor.handleMouseUp(app: MockTestApp(bundleID: "com.apple.TextEdit"), cursor: CGPoint(x: 100, y: 100), clickCount: 1)
+        let delivery = monitor.debounceTask
+        try await waitUntil { finishProbe != nil }
+        monitor.handleMouseDown(at: CGPoint(x: 200, y: 100))
+        finishProbe?.resume(returning: true)
+        await delivery?.value
+        XCTAssertNil(monitor.latestSelection)
+    }
+
+    func testMouseSelectionDeliversBeforePendingInlinePrewarmCompletes() async {
+        @MainActor final class Completion {
+            var finished = false
+        }
+        struct SlowInlineAction: Action {
+            let completion: Completion
+            let id = "test.selection.slowInline"
+            let title = "Slow inline"
+            let icon = ActionIcon.symbol("clock")
+            let chrome = ActionChrome(isInlineResult: true)
+            func isEnabled(for context: ActionContext) -> Bool { true }
+            func perform(_ context: ActionContext) async throws -> ActionResult {
+                try await Task.sleep(for: .milliseconds(800))
+                await MainActor.run { completion.finished = true }
+                return .text("ready")
+            }
+        }
+        let completion = Completion()
+        let evaluator = InlineResultEvaluator.shared
+        defer { evaluator.clearPrewarmed() }
+        evaluator.prewarm(
+            actions: [SlowInlineAction(completion: completion)],
+            context: ActionContext(selection: SelectionContext(text: "valid selection"))
+        )
+        let monitor = makeMonitor()
+        monitor.isExcludedBundle = { _ in false }
+        monitor.policyResolver = { _ in .default }
+        monitor.retriever = SelectionRetrievalCoordinator(inspect: {
+            Self.fixtureTarget(role: "AXTextField", selectedText: "valid selection")
+        }, copyCapture: { _ in nil })
+        monitor.preparePasteProbe = { _, _ in Task { true } }
+        var delivered = false
+        monitor.onSelection = { _, _ in delivered = true }
+        let app = MockTestApp(bundleID: "com.apple.TextEdit")
+        monitor.handleMouseDown(at: CGPoint(x: 100, y: 100))
+        monitor.handleMouseUp(app: app, cursor: CGPoint(x: 200, y: 100), clickCount: 1)
+        await monitor.debounceTask?.value
+
+        XCTAssertTrue(delivered)
+        XCTAssertFalse(completion.finished, "Toolbar delivery must not await pending inline results")
+        XCTAssertEqual(monitor.latestSelection?.canPaste, true)
+    }
+
     func testCurrentSelectionReturnsCachedForMatchingBundleAndNilForMismatch() async throws {
         let monitor = makeMonitor()
         let app = AppIdentity(bundleIdentifier: "com.apple.TextEdit", localizedName: "TextEdit")
@@ -1070,6 +1168,70 @@ final class MacSelectionMonitorTests: XCTestCase {
     }
 
     // MARK: - System chrome gating
+
+    func testDragPreparesChromeProbeBeforeReleaseAndReusesIt() async throws {
+        let monitor = makeMonitor()
+        monitor.policyResolver = { _ in .default }
+        var calls = 0
+        var finish: CheckedContinuation<Bool, Never>?
+        monitor.isPressOnWindowChrome = { _, _ in
+            calls += 1
+            return await withCheckedContinuation { finish = $0 }
+        }
+        monitor.retriever = SelectionRetrievalCoordinator(inspect: {
+            Self.fixtureTarget(role: "AXTextField", selectedText: "dragged text")
+        }, copyCapture: { _ in nil })
+        monitor.handleMouseDown(at: .zero)
+        monitor.handleMouseDragged(at: CGPoint(x: 100, y: 100))
+        try await waitUntil { finish != nil }
+        XCTAssertEqual(calls, 1)
+        monitor.handleMouseUp(app: MockTestApp(bundleID: "com.apple.TextEdit"), cursor: CGPoint(x: 100, y: 100), clickCount: 1)
+        finish?.resume(returning: false)
+        await monitor.debounceTask?.value
+        XCTAssertEqual(calls, 1)
+        XCTAssertEqual(monitor.latestSelection?.context.text, "dragged text")
+    }
+
+    func testPreparedChromeProbeStillBlocksRetrieval() async throws {
+        let monitor = makeMonitor()
+        var completed = false
+        monitor.isPressOnWindowChrome = { _, _ in completed = true; return true }
+        monitor.retriever = SelectionRetrievalCoordinator(inspect: {
+            XCTFail("Window chrome must never retrieve or copy selected text")
+            return Self.fixtureTarget(role: "AXTextField", selectedText: "old text")
+        }, copyCapture: { _ in XCTFail("Window chrome must never Copy"); return nil })
+        monitor.handleMouseDown(at: .zero)
+        monitor.handleMouseDragged(at: CGPoint(x: 100, y: 100))
+        try await waitUntil { completed }
+        monitor.handleMouseUp(app: MockTestApp(bundleID: "com.apple.TextEdit"), cursor: CGPoint(x: 100, y: 100), clickCount: 1)
+        await monitor.debounceTask?.value
+        XCTAssertNil(monitor.latestSelection)
+        XCTAssertEqual(monitor.lastReadResponse?.status, .copyBlocked)
+    }
+
+    func testNewGestureDoesNotReusePreviousChromeVerdict() async throws {
+        let monitor = makeMonitor()
+        monitor.policyResolver = { _ in .default }
+        var calls = 0
+        var finishOld: CheckedContinuation<Bool, Never>?
+        monitor.isPressOnWindowChrome = { _, _ in
+            calls += 1
+            if calls == 1 { return await withCheckedContinuation { finishOld = $0 } }
+            return false
+        }
+        monitor.retriever = SelectionRetrievalCoordinator(inspect: {
+            Self.fixtureTarget(role: "AXTextField", selectedText: "new text")
+        }, copyCapture: { _ in nil })
+        monitor.handleMouseDown(at: .zero)
+        monitor.handleMouseDragged(at: CGPoint(x: 100, y: 100))
+        try await waitUntil { finishOld != nil }
+        monitor.handleMouseDown(at: CGPoint(x: 200, y: 100))
+        monitor.handleMouseUp(app: MockTestApp(bundleID: "com.apple.TextEdit"), cursor: CGPoint(x: 300, y: 100), clickCount: 1)
+        finishOld?.resume(returning: true)
+        await monitor.debounceTask?.value
+        XCTAssertEqual(calls, 2)
+        XCTAssertEqual(monitor.latestSelection?.context.text, "new text")
+    }
 
     func testWindowMoveResizeOrCloseDoesNotRetrieveOldSelection() async {
         let frame = CGRect(x: 100, y: 100, width: 500, height: 400)
@@ -1268,10 +1430,13 @@ final class MacSelectionMonitorTests: XCTestCase {
         XCTAssertEqual(monitor.latestSelection?.context.text, "1080P")
     }
 
-    /// The third press of a triple-click lands 100–200 ms after the second release. It must
-    /// cancel the double-click read before it reads or presents, not race a word popup.
+    func testDoubleClickUsesShortWindowSettleBudget() {
+        XCTAssertEqual(makeMonitor().doubleClickSettleNanoseconds, 60_000_000)
+    }
+
     func testThirdPressCancelsPendingDoubleClickRead() async {
         let monitor = makeLocalityMonitor(axBounds: CGRect(x: 230, y: 790, width: 60, height: 18))
+        monitor.doubleClickSettleNanoseconds = 220_000_000
         final class Counter: @unchecked Sendable { var inspects = 0 }
         let counter = Counter()
         monitor.retriever = SelectionRetrievalCoordinator(inspect: {
@@ -1438,7 +1603,7 @@ final class MacSelectionMonitorTests: XCTestCase {
         XCTAssertFalse(read.isCancelled, "OpenClip's own popup activation must preserve the selection")
     }
 
-    func testSelectionFinishingAfterAppSwitchIsDiscarded() async throws {
+    func testPasteProbeFinishingAfterAppSwitchIsDiscarded() async throws {
         for keyboard in [false, true] {
             let store = MemorySettingsStore()
             store.set(.isMouseHoldEnabled, value: false)
@@ -1457,7 +1622,14 @@ final class MacSelectionMonitorTests: XCTestCase {
                 Task { await withCheckedContinuation { finishProbe = $0 } }
             }
             defer { finishProbe?.resume(returning: nil) }
-            monitor.onSelection = { _, _ in XCTFail("A completed read must not show over a different app") }
+            var deliveries = 0
+            monitor.onSelection = { _, _ in
+                XCTAssertEqual(frontmost.processIdentifier, source.processIdentifier)
+                deliveries += 1
+            }
+            monitor.onPasteAvailabilityResolved = { _, _ in
+                XCTFail("A late probe must not update the popup after an app switch")
+            }
 
             if keyboard {
                 monitor.handleSelectionTrigger(isSelectAll: false)
@@ -1466,7 +1638,8 @@ final class MacSelectionMonitorTests: XCTestCase {
                 monitor.handleMouseUp(app: source, cursor: CGPoint(x: 100, y: 100), clickCount: 1)
             }
             let read = try XCTUnwrap(monitor.debounceTask)
-            try await waitUntil { finishProbe != nil }
+            try await waitUntil { finishProbe != nil && deliveries == 1 }
+            XCTAssertEqual(deliveries, 1, "Present before the Paste probe finishes")
 
             // Same bundle, different process: verify the final guard itself, without an
             // activation notification cancelling the task on its behalf.
@@ -2028,4 +2201,84 @@ private final class MockTestApp: NSRunningApplication {
 
     override var bundleIdentifier: String? { bundleID }
     override var processIdentifier: pid_t { pid }
+}
+
+@MainActor
+final class SelectionPopupPresentationTests: XCTestCase {
+    func testPreparedHostIsReusedWithFreshPresentationIdentityAndContext() {
+        let popup = PopupWindowController(settingsStore: MemorySettingsStore())
+        popup.preparePresentation()
+        XCTAssertFalse(popup.isVisible)
+        XCTAssertNil(popup.panel)
+        ActionCoordinator.shared.register(action: CopyAction())
+        popup.show(for: SelectionContext(text: "first", selectionGeneration: 1), initialMode: .search)
+        let first = popup.panel?.contentView as? PopupPanel.ContentView
+        XCTAssertNotNil(first)
+        let firstID = first?.presentationID
+        popup.hide()
+        popup.show(for: SelectionContext(text: "second", selectionGeneration: 2))
+        XCTAssertTrue(popup.panel?.contentView === first)
+        XCTAssertNotEqual(first?.presentationID, firstID)
+        XCTAssertEqual(first?.presentationID, popup.presentationAttemptID)
+        XCTAssertEqual(popup.currentActionContext?.selection.text, "second")
+        XCTAssertEqual(popup.modeStore.mode, .actions)
+        XCTAssertNil(popup.modeStore.scope)
+        popup.preparePresentation()
+        XCTAssertTrue(popup.panel?.contentView === first)
+        popup.hide()
+    }
+
+    override func setUp() async throws {
+        try await super.setUp()
+        TestIsolation.reset()
+    }
+
+    private struct PasteTargetAction: Action {
+        let id = "test.pasteTarget"
+        let title = "Paste target"
+        let icon = ActionIcon.symbol("doc")
+        func isEnabled(for context: ActionContext) -> Bool { context.pasteTargetAvailable == true }
+        func perform(_ context: ActionContext) async throws -> ActionResult { .none }
+    }
+
+    func testProbeUpdatesViewContextAndActionsWithoutRestartingPresentation() {
+        ActionCoordinator.shared.register(action: PasteTargetAction())
+        let popup = PopupWindowController(settingsStore: MemorySettingsStore())
+        let selection = SelectionContext(text: "test", selectionGeneration: 1)
+        popup.startTestSession(for: selection)
+        let view = PopupView(actions: [], context: ActionContext(selection: selection), modeStore: popup.modeStore, onResult: { _ in })
+        let attempt = popup.presentationAttemptID
+        popup.updatePasteAvailability(for: selection, canPaste: true)
+        XCTAssertEqual(view.context.pasteTargetAvailable, true)
+        XCTAssertTrue(view.actions.contains { $0.id == "test.pasteTarget" })
+        XCTAssertEqual(popup.presentationAttemptID, attempt)
+        popup.updatePasteAvailability(for: selection, canPaste: false)
+        XCTAssertEqual(view.context.pasteTargetAvailable, false)
+        XCTAssertFalse(view.actions.contains { $0.id == "test.pasteTarget" })
+        popup.hide()
+    }
+
+    func testProbeCannotUpdateNewOrDismissedSession() {
+        let popup = PopupWindowController(settingsStore: MemorySettingsStore())
+        let old = SelectionContext(text: "same text", selectionGeneration: 1)
+        let current = SelectionContext(text: "same text", selectionGeneration: 2)
+        popup.startTestSession(for: current)
+        popup.updatePasteAvailability(for: old, canPaste: true)
+        XCTAssertNil(popup.modeStore.selectionUpdate)
+        XCTAssertNil(popup.currentActionContext?.pasteTargetAvailable)
+        popup.hide()
+        popup.updatePasteAvailability(for: current, canPaste: true)
+        XCTAssertNil(popup.modeStore.selectionUpdate)
+        XCTAssertNil(popup.currentActionContext)
+    }
+
+    func testDenyPasteRuleWinsOverLatePositiveProbe() {
+        let popup = PopupWindowController(settingsStore: MemorySettingsStore())
+        let selection = SelectionContext(text: "test", appPolicy: AppPolicyContext(denyPaste: true), selectionGeneration: 1)
+        popup.startTestSession(for: selection)
+        popup.updatePasteAvailability(for: selection, canPaste: true)
+        XCTAssertEqual(popup.modeStore.canPaste, false)
+        XCTAssertEqual(popup.currentActionContext?.pasteTargetAvailable, false)
+        popup.hide()
+    }
 }

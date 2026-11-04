@@ -94,6 +94,11 @@ Default to no comment. Code and names say *what*; a comment earns its place only
 - Comment-only changes must pass `./scripts/verify_comment_only.sh` (non-comment lines identical to the base) and `./scripts/lint_comments.sh`.
 
 ## Tests
+
+- Tests run in the `Testing` configuration with the separate `com.qutran.Qutran.TestHost`
+  identity. Keep Debug and Release app identities separate so test builds cannot replace
+  the installed app's macOS permission record. `scripts/test.sh` and both shared schemes
+  select this configuration.
  
 - `Tests/OpenClipTests/` is one flat target. Test classes that touch app singletons call `TestIsolation.reset()` in `setUp()`; store-backed tests use `MemorySettingsStore` rather than the real preferences domain.
 - All unit and integration tests are isolated with in-memory test doubles and temporary directories (including `SecretActionOptionStoreTests`), allowing the full suite to run cleanly in headless CI with zero skips.

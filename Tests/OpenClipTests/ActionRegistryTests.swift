@@ -45,6 +45,42 @@ struct MockLauncherAction: Action, SubActionProviding {
 }
 
 final class ActionRegistryTests: XCTestCase {
+    @MainActor
+    private final class EvaluationCounter { var calls = 0 }
+
+    private struct CountingAction: Action {
+        let id: String
+        let title = "Counter"
+        let icon = ActionIcon.symbol("star")
+        let chrome: ActionChrome
+        let counter: EvaluationCounter
+        @MainActor func isEnabled(for context: ActionContext) -> Bool { counter.calls += 1; return true }
+        @MainActor func perform(_ context: ActionContext) async throws -> ActionResult { .none }
+    }
+
+    @MainActor
+    func testDisabledActionsDoNotRunVisibilityAnalysis() {
+        let store = MemorySettingsStore()
+        store.set(.disabledActionIDs, value: ["test.disabled"])
+        let registry = ActionRegistry(settingsStore: store)
+        let counter = EvaluationCounter()
+        registry.register(action: CountingAction(id: "test.disabled", chrome: ActionChrome(), counter: counter))
+        XCTAssertTrue(registry.availableActions(for: ActionContext(selection: SelectionContext(text: "test"))).isEmpty)
+        XCTAssertEqual(counter.calls, 0)
+    }
+
+    @MainActor
+    func testGroupVisibilityIsEvaluatedOncePerResolutionAndRefreshedNextTime() {
+        let registry = ActionRegistry(settingsStore: MemorySettingsStore())
+        let counter = EvaluationCounter()
+        registry.register(action: CountingAction(id: "test.group", chrome: ActionChrome(popupBehavior: .showSubActions), counter: counter))
+        let context = ActionContext(selection: SelectionContext(text: "test"))
+        _ = registry.availableActions(for: context)
+        XCTAssertEqual(counter.calls, 1)
+        _ = registry.availableActions(for: context)
+        XCTAssertEqual(counter.calls, 2)
+    }
+
     override func setUp() async throws {
         try await super.setUp()
         await MainActor.run { TestIsolation.reset() }

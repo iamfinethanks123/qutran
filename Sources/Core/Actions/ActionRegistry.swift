@@ -285,7 +285,13 @@ public final class ActionRegistry: ObservableObject, Sendable {
             && !(context.selection.source == .ocr && action is any OCRInputAction) {
             return false
         }
-        return action.isEnabled(for: context)
+        let startedAt = ProcessInfo.processInfo.systemUptime
+        let enabled = action.isEnabled(for: context)
+        let elapsedMS = Int((ProcessInfo.processInfo.systemUptime - startedAt) * 1000)
+        if elapsedMS >= 2 {
+            Log.coordinator.debug("[Trace#\(context.selection.traceID ?? 0, privacy: .public)] action eligibility id=\(action.id, privacy: .public) elapsedMS=\(elapsedMS, privacy: .public)")
+        }
+        return enabled
     }
 
     /// Per-action or whole-package settings disable, shared by the bar and palette.
@@ -349,14 +355,14 @@ public final class ActionRegistry: ObservableObject, Sendable {
     public func availableActions(for context: ActionContext) -> [any Action] {
         let disabledIDs = settingsStore.get(.disabledActionIDs)
         let disabledPackages = settingsStore.get(.disabledPackages)
+        var visibility: [String: Bool] = [:]
         func passes(_ action: any Action) -> Bool {
-            // Group children stay in the catalog for sub-bars; PopupView removes them from the top-level bar.
-            if action is GatedExtensionAction {
-                return false
-            }
-            guard canPerform(action, in: context) else { return false }
-            // Per-action and whole-package disable, before per-action visibility runs.
-            return !isDisabledInSettings(action, disabledIDs: disabledIDs, disabledPackages: disabledPackages)
+            if let cached = visibility[action.id] { return cached }
+            let allowed = !(action is GatedExtensionAction)
+                && !isDisabledInSettings(action, disabledIDs: disabledIDs, disabledPackages: disabledPackages)
+                && canPerform(action, in: context)
+            visibility[action.id] = allowed
+            return allowed
         }
 
         // A disabled or invisible group row hides its sub-actions, so they never leak into the bar.

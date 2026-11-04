@@ -117,6 +117,9 @@ class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCenterDele
                 self?.popupController?.show(for: context, pasteAvailable: canPaste)
             }
         }
+        macMonitor.onPasteAvailabilityResolved = { [weak controller] context, canPaste in
+            controller?.updatePasteAvailability(for: context, canPaste: canPaste)
+        }
         let captureController = CaptureTextController(popupController: controller)
         captureTextController = captureController
         macMonitor.isSuppressed = { [weak self, weak captureController] in
@@ -156,6 +159,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCenterDele
             ActionCoordinator.shared.register(action: CompletionAction())
             ActionCoordinator.shared.register(action: AIToolsAction())
             PersonalFeatures.registerActions()
+            if NSClassFromString("XCTestCase") == nil { controller.preparePresentation() }
             PersonalMenu.shared.installHotkey()
             // Register each AI preset as an individual action (palette + Preferences → Actions).
             aiActionSync = AIActionSync.shared

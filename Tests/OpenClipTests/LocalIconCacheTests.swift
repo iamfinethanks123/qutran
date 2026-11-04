@@ -9,6 +9,7 @@ final class LocalIconCacheTests: XCTestCase {
         try await super.setUp()
         await MainActor.run {
             TestIsolation.reset()
+            LocalIconCache.shared.clear()
         }
         tempDirectoryURL = FileManager.default.temporaryDirectory
             .appendingPathComponent("LocalIconCacheTests_\(UUID().uuidString)")

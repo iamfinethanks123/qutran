@@ -259,6 +259,12 @@ public struct PopupSearchView: View {
             naturalRowWidth = Self.naturalRowWidth(for: results)
             selectedIndex = 0
         }
+        .onChange(of: catalog.map(\.id)) { _, _ in
+            rebuildSearchIndex()
+        }
+        .onChange(of: context.pasteTargetAvailable) { _, available in
+            activeSelectionContext = activeSelectionContext.with(pasteTargetAvailable: available)
+        }
         .onChange(of: scope?.parent.id) { _, _ in
             rebuildSearchIndex()
         }

@@ -72,7 +72,13 @@ public class PopupPanel: NSPanel {
     override public var canBecomeMain: Bool { allowsKey }
 
     /// Root view. The transparent shadow ring is excluded from hit-testing so clicks there reach the window beneath.
-    public final class ContentView: NSHostingView<PopupView> {
+    public final class ContentView: NSHostingView<AnyView> {
+        private(set) var presentationID: UUID?
+
+        func present(_ view: PopupView, id: UUID) {
+            presentationID = id
+            rootView = AnyView(view.id(id))
+        }
         private var trackingAreaRef: NSTrackingArea?
 
         /// Hover tracking for when OpenClip is inactive (e.g. over another app's fullscreen Space): event

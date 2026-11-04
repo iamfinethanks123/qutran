@@ -9,7 +9,7 @@ import Core
 
 @MainActor
 public struct PermissionRecoveryView: View {
-    @ObservedObject private var permissionManager = PermissionManager.shared
+    @ObservedObject private var permissionManager: PermissionManager
     public let isUpdate: Bool
     public let onComplete: @MainActor () -> Void
     public let onDismiss: @MainActor () -> Void
@@ -19,9 +19,11 @@ public struct PermissionRecoveryView: View {
 
     public init(
         isUpdate: Bool,
+        permissionManager: PermissionManager = .shared,
         onComplete: @escaping @MainActor () -> Void,
         onDismiss: @escaping @MainActor () -> Void
     ) {
+        self._permissionManager = ObservedObject(wrappedValue: permissionManager)
         self.isUpdate = isUpdate
         self.onComplete = onComplete
         self.onDismiss = onDismiss
@@ -97,7 +99,7 @@ public struct PermissionRecoveryView: View {
             autoDismissTask = nil
             permissionManager.stopMonitoring()
         }
-        .onChange(of: permissionManager.isAccessibilityGranted) { _, isGranted in
+        .onChange(of: permissionManager.isAccessibilityGranted, initial: true) { _, isGranted in
             if isGranted && !hasAutoDismissed {
                 hasAutoDismissed = true
                 autoDismissTask = Task { @MainActor in
