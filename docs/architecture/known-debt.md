@@ -913,3 +913,9 @@ requirements; other schemes retain their system handlers. Effects run through th
 BrowserTabOpener front-window scripting and LaunchServices fallback. JavaScript owns its loop
 and deduplication when opening multiple URLs. Firefox has no tab scripting; from a private window
 (detected by the English "Private Browsing" title suffix) it runs `firefox --private-window URL`.
+
+## Popup arrival animation
+
+- New popup sessions fade from 45% opacity and a 4 pt blur to their final appearance in
+  80 ms. Static previews and macOS Reduce Motion render immediately. Canceled arrival
+  tasks do not update a later presentation.

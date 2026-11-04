@@ -43,6 +43,8 @@ public enum PopupMetrics {
     }
     /// Hard execution timeout for inline evaluation; covers p99 heavy JS with margin.
     public static let inlineEvaluationTimeout: TimeInterval = 0.90
+    public static let arrivalDuration: TimeInterval = 0.08
+    public static let arrivalBlurRadius: CGFloat = 4
     /// Maximum width (pt at 1.0 scale) for the trailing inline accessory in the search palette.
     public static let inlineSearchAccessoryMaxWidth: CGFloat = 120.0
     public static let popupCornerRadius: CGFloat = 14.0
