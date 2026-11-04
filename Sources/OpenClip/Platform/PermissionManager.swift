@@ -3,6 +3,7 @@
 //
 // Checks and prompts for required macOS Accessibility permissions necessary for text retrieval and event monitoring.
 import AppKit
+import Combine
 import ApplicationServices
 import Core
 
@@ -16,15 +17,39 @@ public final class PermissionManager: ObservableObject {
     @Published public private(set) var isScreenRecordingGranted: Bool = false
 
     private var pollingTask: Task<Void, Never>?
+    private var didLogStatus = false
 
-    private init() {
-        self.isAccessibilityGranted = Self.queryAX()
-        self.isScreenRecordingGranted = Self.queryScreenRecording()
+    private let accessibilityQuery: @MainActor () -> Bool
+    private let screenRecordingQuery: @MainActor () -> Bool
+    private let requestScreenCapture: @MainActor () -> Bool
+    private let openSettings: @MainActor (URL) -> Void
+    private let notificationCenter: NotificationCenter
+    private var activationSubscription: AnyCancellable?
+
+    init(
+        accessibilityQuery: @escaping @MainActor () -> Bool = PermissionManager.queryAX,
+        screenRecordingQuery: @escaping @MainActor () -> Bool = PermissionManager.queryScreenRecording,
+        requestScreenCapture: @escaping @MainActor () -> Bool = { CGRequestScreenCaptureAccess() },
+        openSettings: @escaping @MainActor (URL) -> Void = { NSWorkspace.shared.open($0) },
+        notificationCenter: NotificationCenter = .default
+    ) {
+        self.accessibilityQuery = accessibilityQuery
+        self.screenRecordingQuery = screenRecordingQuery
+        self.requestScreenCapture = requestScreenCapture
+        self.openSettings = openSettings
+        self.notificationCenter = notificationCenter
+        self.isAccessibilityGranted = accessibilityQuery()
+        self.isScreenRecordingGranted = screenRecordingQuery()
+        activationSubscription = notificationCenter.publisher(for: NSApplication.didBecomeActiveNotification)
+            .sink { [weak self] _ in
+                Task { @MainActor [weak self] in self?.checkStatus() }
+            }
     }
 
     // MARK: - Public API
 
     public func startMonitoring() {
+        checkStatus()
         guard pollingTask == nil else { return }
         pollingTask = Task { @MainActor [weak self] in
             while !Task.isCancelled {
@@ -40,43 +65,30 @@ public final class PermissionManager: ObservableObject {
     }
 
     public func checkStatus() {
-        let current = Self.queryAX()
+        let current = accessibilityQuery()
+        let screenRecording = screenRecordingQuery()
+        if !didLogStatus || current != isAccessibilityGranted || screenRecording != isScreenRecordingGranted {
+            Log.permissions.info("permission status accessibility=\(current, privacy: .public) screenRecording=\(screenRecording, privacy: .public) pid=\(ProcessInfo.processInfo.processIdentifier, privacy: .public) app=\(Bundle.main.bundleURL.path, privacy: .public)")
+            didLogStatus = true
+        }
         if isAccessibilityGranted != current {
             isAccessibilityGranted = current
-            NotificationCenter.default.post(name: .openClipAccessibilityChanged, object: current)
+            notificationCenter.post(name: .openClipAccessibilityChanged, object: current)
         }
-        let screenRecording = Self.queryScreenRecording()
         if isScreenRecordingGranted != screenRecording {
             isScreenRecordingGranted = screenRecording
         }
     }
 
-    /// Asks TCC to list OpenClip under Screen Recording, then opens the pane. macOS usually applies a
-    /// new grant only after the app restarts, so the row keeps showing "Required" until relaunch.
-    /// A rebuilt or updated copy with a new signature leaves a stale TCC entry that macOS lists as
-    /// off or hides entirely, so an ungranted request clears that entry first and re-registers.
+    /// Requests access for the running app without removing an existing TCC grant.
     public func requestScreenRecordingPermission() {
         startMonitoring()
-        Task { @MainActor in
-            if !Self.queryScreenRecording() {
-                await Self.resetScreenRecordingEntry()
-                _ = CGRequestScreenCaptureAccess()
-            }
-            if let url = URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_ScreenCapture") {
-                NSWorkspace.shared.open(url)
-            }
+        if !screenRecordingQuery() {
+            _ = requestScreenCapture()
+            checkStatus()
         }
-    }
-
-    private static func resetScreenRecordingEntry() async {
-        do {
-            _ = try await ShellProcessRunner.run(ShellProcessRunner.Invocation(
-                executableURL: URL(fileURLWithPath: "/usr/bin/tccutil"),
-                arguments: ["reset", "ScreenCapture", Bundle.main.bundleIdentifier ?? "com.openclip.OpenClip"],
-                environment: [:]
-            ))
-        } catch {
-            Log.permissions.error("Failed to reset Screen Recording permission: \(error.localizedDescription)")
+        if let url = URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_ScreenCapture") {
+            openSettings(url)
         }
     }
 
@@ -115,14 +127,23 @@ public final class PermissionManager: ObservableObject {
     public func relaunchApp() {
         let url = Bundle.main.bundleURL
         let config = NSWorkspace.OpenConfiguration()
-        NSWorkspace.shared.openApplication(at: url, configuration: config) { _, _ in
-            DispatchQueue.main.async { NSApp.terminate(nil) }
+        config.createsNewApplicationInstance = true
+        NSWorkspace.shared.openApplication(at: url, configuration: config) { app, error in
+            guard let app else {
+                Log.permissions.error("Unable to relaunch app: \(error?.localizedDescription ?? "unknown error")")
+                return
+            }
+            let launchedPID = app.processIdentifier
+            DispatchQueue.main.async {
+                guard launchedPID != ProcessInfo.processInfo.processIdentifier else { return }
+                NSApp.terminate(nil)
+            }
         }
     }
 
     // MARK: - Internal
 
-    /// Direct TCC query — bypasses any in-process caching.
+    /// Queries trust for this running process and its code identity.
     private static func queryAX() -> Bool {
         AXIsProcessTrustedWithOptions(nil)
     }

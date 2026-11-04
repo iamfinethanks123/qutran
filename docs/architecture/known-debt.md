@@ -914,6 +914,34 @@ BrowserTabOpener front-window scripting and LaunchServices fallback. JavaScript 
 and deduplication when opening multiple URLs. Firefox has no tab scripting; from a private window
 (detected by the English "Private Browsing" title suffix) it runs `firefox --private-window URL`.
 
+## Permission status and local updates
+
+- Screen Recording requests preserve existing TCC entries; opening the permission pane never
+  runs `tccutil reset`. Grant checks reflect the running process, not a saved UI preference.
+- Permission status refreshes immediately when monitoring starts and on app activation, including
+  after another permission view has stopped polling. Returning from System Settings updates both
+  rows; macOS may still require an app restart before a new grant applies.
+- Local reinstalls must keep the installation path, bundle identifier and signing identity stable.
+  `scripts/dev_run.sh` reads the gitignored `keys/dev-signing-identity` fingerprint. Switching
+  between ad-hoc, development and release signatures can require a new grant; the app must not
+  display a fabricated granted state to hide a signature mismatch.
+
+- The recovery view handles the initial trust value as well as later changes, so a permission
+  grant detected before its observer attaches still dismisses the window. Permission diagnostics
+  log booleans, PID and bundle path only. Relaunch requests a new process and leaves the current
+  process running if the replacement cannot be started.
+
+## Test host identity and TCC
+
+- The Testing configuration builds `Qutran Test Host.app` as `com.qutran.Qutran.TestHost`.
+  The test scheme and runner both select this configuration; Debug and Release retain the
+  installed app identity. Testing must never use the installed app's bundle identifier: macOS
+  can attach the Accessibility UI entry to the ad-hoc test host's cdhash and then reject the
+  installed app despite the switch appearing on. The mismatch was confirmed in tccd logs.
+- Keep the test identity separate even when changing signing certificates. A runtime regression
+  test checks the host identity. Stale test-host LaunchServices registrations created before
+  this separation must be removed before re-adding the installed app's permission entry.
+
 ## Popup arrival animation
 
 - New popup sessions fade from 45% opacity and a 4 pt blur to their final appearance in

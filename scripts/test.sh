@@ -11,10 +11,14 @@ set -eo pipefail
 PROJECT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$PROJECT_DIR"
 
+if [ ! -f OpenClip.xcodeproj/project.pbxproj ] || [ project.yml -nt OpenClip.xcodeproj/project.pbxproj ]; then
+    xcodegen generate
+fi
+
 # The test host is the app itself: while a UI test switches it to a regular app it gets a Dock icon, and a host left
 # behind by an interrupted run keeps that icon. Clear stale hosts before and after every run.
 kill_stale_test_hosts() {
-    pkill -f 'build.noindex/TestDerivedData/Build/Products/Debug/Qutran.app/Contents/MacOS/Qutran' 2>/dev/null || true
+    pkill -f 'build.noindex/TestDerivedData/Build/Products/Testing/Qutran Test Host.app/Contents/MacOS/Qutran Test Host' 2>/dev/null || true
 }
 kill_stale_test_hosts
 trap kill_stale_test_hosts EXIT
@@ -59,8 +63,8 @@ run_xcodebuild() {
     # suite are deterministic regardless of the host machine's locale (dev machines run zh-Hans;
     # CI runners are en). Without this, `String(localized:)` resolves per-locale and tests that
     # assert English copy fail outside English environments.
-    # Under build.noindex/ (Spotlight skips .noindex folders) so test hosts don't show up as extra apps.
-    local cmd=(xcodebuild -project OpenClip.xcodeproj -scheme OpenClipTests -destination 'platform=macOS' -derivedDataPath "$PROJECT_DIR/build.noindex/TestDerivedData" -testLanguage en "${extra_args[@]}" test)
+    # A separate identity prevents the ad-hoc test host from replacing the installed app's TCC record.
+    local cmd=(xcodebuild -project OpenClip.xcodeproj -scheme OpenClipTests -configuration Testing -destination 'platform=macOS' -derivedDataPath "$PROJECT_DIR/build.noindex/TestDerivedData" -testLanguage en "${extra_args[@]}" test)
 
     if [ "$VERBOSE" = true ]; then
         "${cmd[@]}"
