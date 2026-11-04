@@ -87,6 +87,8 @@ public struct PopupView: View {
     @Setting(SettingKey.contextualPillPosition) private var contextualPillPosition
     @Setting(SettingKey.popupAlignment) private var popupAlignment
     @Environment(\.colorScheme) private var colorScheme
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @State private var hasPresented = false
 
     private var themeCategory: PopupThemeModel.Category {
         PopupThemeModel.category(fromStored: selectedTheme)
@@ -347,6 +349,17 @@ public struct PopupView: View {
 
     public var body: some View {
         barContent
+            .blur(radius: isStatic || reduceMotion || hasPresented ? 0 : PopupMetrics.arrivalBlurRadius)
+            .opacity(isStatic || reduceMotion || hasPresented ? 1 : 0.45)
+            .task(id: sessionID) {
+                guard !isStatic, !reduceMotion else { return }
+                var reset = Transaction()
+                reset.disablesAnimations = true
+                withTransaction(reset) { hasPresented = false }
+                await Task.yield()
+                guard !Task.isCancelled else { return }
+                withAnimation(.easeOut(duration: PopupMetrics.arrivalDuration)) { hasPresented = true }
+            }
             // Transparent ring hosting the drop shadow. Must equal PopupMetrics.popupShadowInset, which
             // PopupPanel excludes from hit-testing so shadow clicks fall through.
             .padding(PopupMetrics.popupShadowInset)
@@ -371,6 +384,9 @@ public struct PopupView: View {
             }
             .onReceive(hoverState.$location) { location in
                 updateHoveredTarget(for: location)
+            }
+            .onChange(of: reduceMotion) { _, _ in
+                hasPresented = true
             }
             .onChange(of: hoveredTarget) { _, newTarget in
                 updateTooltip(for: newTarget)
